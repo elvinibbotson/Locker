@@ -1,0 +1,6 @@
+<svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <line x1="12" y1="21" x2="21" y2="12" style="stroke:white; stroke-width:3"/>
+    <line x1="12" y1="21" x2="3" y2="12" style="stroke:white; stroke-width:3"/>
+    <line x1="12" y1="3" x2="12" y2="21" style="stroke:white; stroke-width:3"/>
+</svg>
+	
