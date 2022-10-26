@@ -18,27 +18,22 @@
 	<ul id="list"></ul>
 </div>
 
-<div id='controls'>
+<div id='buttonNew' class='round-button'><img src='newButton24px.svg'/></div>
+
+<!--div id='controls'>
     <button class='controlButton' id='upButton'></button>
     <button class='controlButton' id='downButton'></button>
     <button class='controlButton' id='deleteButton'></button>
     <button class='controlButton' id='addButton'></button>
     <button class='controlButton' id='editButton'></button>
-</div>
+</div-->
 
 <div id="addDialog" class='dialog'>
-	<div>
-	    <span id='addTitle' class='dialog-title'>add</span>
-	    <span id='secureChooser'>
-	        <label for='secureChoice'>private</label>
-	        <input id='secureChoice' type='checkbox'>
-	    </span>
-	</div>
 	<div id='typeChooser'>
 	    <input id='listChoice' type='radio' name='type' value='list'>
 	    <label for='listChoice'>list</label><br>
-	    <input id='checklistChoice' type='radio' name='type' value='checklist'>
-	    <label for='checklistChoice'>checklist</label><br>
+	    <!--input id='checklistChoice' type='radio' name='type' value='checklist'>
+	    <label for='checklistChoice'>checklist</label><br-->
 	    <input id='itemChoice' type='radio' name='type' value='item'>
 	    <label for='itemChoice'>note</label><br>
 	</div>
@@ -46,7 +41,7 @@
 		<button id="cancelAddButton" class="icon-button"></button>
 		<label for='cancelAddButton'>cancel</label>
 	    <div id='addActionGroup' class='action-group'>
-	        <label for='confirmAddButton'>add</label>
+	        <label for='confirmAddButton'>ADD</label>
 		    <button id="confirmAddButton" class="icon-button"></button>
 		</div>
 	</div>
@@ -65,15 +60,19 @@
 	</div>
 </div>
 
-<div id='editItemDialog' class='dialog'>
-    <div id='editItemTitle'>edit</div>
-    <p><input type="text" id="editItemField" size="15"/></p>
+<div id='itemDialog' class='dialog'>
+    <div id='itemTitle'>list</div>
+    <p><input type="text" id="itemField" size="15"/></p>
     <div class="dialog-buttons">
-		<button id="cancelEditItemButton" class="icon-button"></button>
-		<label for='cancelEditItemButton'>cancel</label>
-		<div id='editItemActionGroup'>
-	        <label for='confirmEditItemButton'>save</label>
-		    <button id="confirmEditItemButton" class="icon-button"></button>
+		<button id="cancelItemButton" class="icon-button"></button>
+		<label for='cancelItemButton'>cancel</label>
+		<div id='deleteItemGroup'>
+			<button id="deleteItemButton" class="icon-button"></button>
+			<label for='deleteItemButton'>delete</label>
+		</div>
+		<div id='confirmItemGroup'>
+	        <label for='confirmItemButton'>save</label>
+		    <button id="confirmItemButton" class="icon-button"></button>
 		</div>
 	</div>
 </div>
@@ -83,7 +82,9 @@
     <textarea id="noteField" rows='5' cols='30'></textarea>
     <div class="dialog-buttons">
         <button id="cancelNoteButton" class="icon-button"></button>
-		<label for='cancelNoteButton'>cancel</label>
+		<label for='cancelNoteButton'>cancel&nbsp;</label>
+		<button id="deleteNoteButton" class="icon-button"></button>
+		<label for='deleteNoteButton'>delete</label>
 		<div id='confirmNoteGroup'>
 	        <label for='confirmNoteButton'>save</label>
 		    <button id="confirmNoteButton" class="icon-button"></button>
@@ -93,7 +94,7 @@
 
 <div id='keyDialog' class='dialog'>
     <div class='dialog-title'>
-        <span id='keyTitle'>4-digit key: </span>
+        <span id='keyTitle'>PIN: </span>
         <input type="password" id="keyField" size="4"/>
     </div>
     <input type="hidden" id="keyCheck" value="****">
@@ -101,7 +102,7 @@
         <button id="cancelKeyButton" class="icon-button"></button>
 		<label for='cancelKeyButton'>cancel</label>
 		<div id='confirmKeyGroup'>
-	        <label for='confirmKeyButton' id='keyLabel'>unlock</label>
+	        <label for='confirmKeyButton' id='keyLabel'>UNLOCK</label>
 		    <button id="confirmKeyButton" class="icon-button"></button>
 		</div>
 	</div>

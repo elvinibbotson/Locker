@@ -106,7 +106,7 @@ label {
     border: none;
     margin: 0;
 }
-
+/*
 #upButton {
     background: url(upButton24px.svg) center center no-repeat;
 }
@@ -115,7 +115,7 @@ label {
     background: url(downButton24px.svg) center center no-repeat;
 }
 
-#deleteButton {
+#deleteItemButton {
     background: url(deleteButton24px.svg) center center no-repeat;
 }
 
@@ -126,6 +126,7 @@ label {
 #editButton {
     background: url(moreButton24px.svg) center center no-repeat;
 }
+*/
 
 #main {
     margin-top: 24px;
@@ -165,7 +166,7 @@ li {
 .list-item.selected {
     background-color: silver;
 }
-
+/*
 .open-button {
     width: 24px;
     height: 24px;
@@ -173,13 +174,14 @@ li {
     background: url(moreButton24px.svg) center center no-repeat;
     float: right;
 }
-
+*/
 .dialog {
   background: dimgray;
   position: absolute;
-  bottom: 0;
+  top: 0;
   padding: 5px;
   width: 100%;
+  z-index: 20;
   display: none;
 }
 
@@ -191,17 +193,38 @@ li {
 .dialog-buttons {
     margin: 10px;
 }
-
+/*
 #secureChooser {
     float: right;
     text-align: right;
     margin: 10px;
 }
-
+*/
 .icon-button {
     width: 24px;
     height: 24px;
     border: none;
+}
+
+.round-button {
+	display: block;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	width: 50px;
+	height: 50px;
+	border: 0px solid #222;
+	border-radius: 50%;
+	background: gray;
+	box-shadow: 0,0,3px,gray;
+	z-index: 50;
+}
+
+.round-button img {
+	display: block;
+	width: 24px;
+	height: 24px;
+	padding: 13px;
 }
 
 #cancelAddButton {
@@ -230,16 +253,28 @@ li {
     background: url(addButton24px.svg) center center no-repeat;
 }
 
-#cancelEditItemButton {
+#cancelItemButton {
     background: url(cancelButton24px.svg) center center no-repeat;
 }
 
-#editItemActionGroup {
+#deleteItemButton {
+	background: url(deleteButton24px.svg) center center no-repeat;
+}
+
+#cancelNoteButton {
+    background: url(cancelButton24px.svg) center center no-repeat;
+}
+
+#deleteNoteButton {
+	background: url(deleteButton24px.svg) center center no-repeat;
+}
+
+#confirmNoteGroup {
     float: right;
     right: 10px;
 }
 
-#confirmEditItemButton {
+#confirmItemButton {
     background: url(okButton24px.svg) center center no-repeat;
 }
 
@@ -247,7 +282,11 @@ li {
     background: url(cancelButton24px.svg) center center no-repeat;
 }
 
-#confirmNoteGroup {
+#deleteItemButton {
+	background: url(deleteButton24px.svg) center center no-repeat;
+}
+
+#confirmItemGroup {
     float: right;
     right: 10px;
 }
