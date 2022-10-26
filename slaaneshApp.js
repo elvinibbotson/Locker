@@ -781,7 +781,7 @@ function keyCheck() {
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
 console.log("last save: "+lastSave+"; saved key: "+keyCode);
-keyCode=null; // **** DIAGNOSTICS ****
+// keyCode=null; // **** DIAGNOSTICS ****
 if(!keyCode) { // first use - set a PIN
     keyCode=null;
     id('keyTitle').innerHTML='set a key';
