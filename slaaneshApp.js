@@ -789,7 +789,7 @@ if(!keyCode) { // first use - set a PIN
 }
 else { // start-up - enter PIN
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
-	console.log("decoded keyCode: "+keyCode);
+	alert("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='enter key';
     id('keyField').value='';
     id('keyCheck').value=keyCode;
