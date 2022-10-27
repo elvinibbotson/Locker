@@ -20,20 +20,10 @@
 
 <div id='buttonNew' class='round-button'><img src='newButton24px.svg'/></div>
 
-<!--div id='controls'>
-    <button class='controlButton' id='upButton'></button>
-    <button class='controlButton' id='downButton'></button>
-    <button class='controlButton' id='deleteButton'></button>
-    <button class='controlButton' id='addButton'></button>
-    <button class='controlButton' id='editButton'></button>
-</div-->
-
 <div id="addDialog" class='dialog'>
 	<div id='typeChooser'>
 	    <input id='listChoice' type='radio' name='type' value='list'>
 	    <label for='listChoice'>list</label><br>
-	    <!--input id='checklistChoice' type='radio' name='type' value='checklist'>
-	    <label for='checklistChoice'>checklist</label><br-->
 	    <input id='itemChoice' type='radio' name='type' value='item'>
 	    <label for='itemChoice'>note</label><br>
 	</div>
@@ -47,7 +37,7 @@
 	</div>
 </div>
 
-<div id='addItemDialog' class='dialog'>
+<!--div id='addItemDialog' class='dialog'>
     <div id='addItemTitle' class='dialog-title'>add</div>
     <p><input type="text" id="addItemField" size="15"/></p>
     <div class="dialog-buttons">
@@ -58,22 +48,15 @@
 		    <button id="confirmAddItemButton" class="icon-button"></button>
 		</div>
 	</div>
-</div>
+</div-->
 
-<div id='itemDialog' class='dialog'>
-    <div id='itemTitle'>list</div>
-    <p><input type="text" id="itemField" size="15"/></p>
+<div id='listDialog' class='dialog'>
+    <div id='listDialogTitle' class='dialog-title'>list</div>
+    <p><input type="text" id="listField" size="15"/></p>
     <div class="dialog-buttons">
-		<button id="cancelItemButton" class="icon-button"></button>
-		<label for='cancelItemButton'>cancel</label>
-		<div id='deleteItemGroup'>
-			<button id="deleteItemButton" class="icon-button"></button>
-			<label for='deleteItemButton'>delete</label>
-		</div>
-		<div id='confirmItemGroup'>
-	        <label for='confirmItemButton'>save</label>
-		    <button id="confirmItemButton" class="icon-button"></button>
-		</div>
+		<button id="cancelListButton" class="icon-button"></button>
+		<button id="deleteListButton" class="icon-button"></button>
+		<button id="confirmListButton" class="icon-button"></button>
 	</div>
 </div>
 
@@ -82,13 +65,8 @@
     <textarea id="noteField" rows='5' cols='30'></textarea>
     <div class="dialog-buttons">
         <button id="cancelNoteButton" class="icon-button"></button>
-		<label for='cancelNoteButton'>cancel&nbsp;</label>
 		<button id="deleteNoteButton" class="icon-button"></button>
-		<label for='deleteNoteButton'>delete</label>
-		<div id='confirmNoteGroup'>
-	        <label for='confirmNoteButton'>save</label>
-		    <button id="confirmNoteButton" class="icon-button"></button>
-		</div>
+		<button id="confirmNoteButton" class="icon-button"></button>
 	</div>
 </div>
 
@@ -100,11 +78,11 @@
     <input type="hidden" id="keyCheck" value="****">
     <div class="dialog-buttons">
         <button id="cancelKeyButton" class="icon-button"></button>
-		<label for='cancelKeyButton'>cancel</label>
-		<div id='confirmKeyGroup'>
-	        <label for='confirmKeyButton' id='keyLabel'>UNLOCK</label>
+		<!--label for='cancelKeyButton'>cancel</label-->
+		<!--div id='confirmKeyGroup'>
+	        <label for='confirmKeyButton' id='keyLabel'>UNLOCK</label-->
 		    <button id="confirmKeyButton" class="icon-button"></button>
-		</div>
+		<!--/div-->
 	</div>
 </div>
 
