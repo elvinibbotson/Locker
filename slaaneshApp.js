@@ -13,25 +13,23 @@ var currentDialog=null;
 var depth=0;
 var path=[];
 var lastSave=null;
+var pin='';
 var keyCode=null;
 var unlocked=false;
 var months="JanFebMarAprMayJunJulAugSepOctNovDec";
 var dragStart={};
-// var dragEnd=0;
 
 // DRAG TO CHANGE DEPTH
 id('main').addEventListener('touchstart', function(event) {
     // console.log(event.changedTouches.length+" touches");
     dragStart.x=event.changedTouches[0].clientX;
     dragStart.y=event.changedTouches[0].clientY;
-    // console.log('start drag at '+dragStart.x+','+dragStart.y);
 })
 
 id('main').addEventListener('touchend', function(event) {
     var drag={};
     drag.x=dragStart.x-event.changedTouches[0].clientX;
     drag.y=dragStart.y-event.changedTouches[0].clientY;
-    // console.log('drag '+drag.x+','+drag.y);
     if(Math.abs(drag.y)>50) return; // ignore vertical drags
     if((drag.x<-50)&&(depth>0)) { // drag right to decrease depth...
         console.log('path: '+path);
@@ -55,7 +53,6 @@ id('heading').addEventListener('click',function() {
 			console.log('disable delete');
 		}
 		else id('deleteListButton').style.display='block';
-		// id('deleteItemButton').disabled=(items.length>0); // cannot delete lists with content
 		showDialog('listDialog',true);
 	}
 	else backup(); // depth 0 = top level - force backup
@@ -84,8 +81,6 @@ function showAddDialog() {
 
 id('buttonNew').addEventListener('click', function(){
     if(depth<2 && list.type>0) { // list above depth 2 - can add sub-list
-        // id('itemChoice').disabled=(depth<1);
-        // id('listChoice').checked=true;
         showDialog('addDialog',true);
     }
     else {
@@ -176,7 +171,6 @@ id('deleteNoteButton').addEventListener('click', function() {
     populateList();
     itemIndex=null;
     currentListItem=null;
-    // showDialog('controls',false);
 })
 
 id('confirmNoteButton').addEventListener('click', function() {
@@ -220,12 +214,11 @@ id('confirmNoteButton').addEventListener('click', function() {
 })
 
 // KEYCODE INPUT
+/*
 id('confirmKeyButton').addEventListener('click', function() {
     console.log("keyCode: "+keyCode+" check: "+id('keyCheck').value+" input: "+id('keyField').value);
     var k=id('keyField').value;
     if(keyCode===null) { // set keyCode - step 1
-        // keyCode=id('keyField').value;
-        // if(keyCode.length<4) {
         if(k.length<4) {
             alert('4 digits or more');
             return;
@@ -239,7 +232,6 @@ id('confirmKeyButton').addEventListener('click', function() {
     else if(k==id('keyCheck').value) { // set keyCode step 2 or unlock
         window.localStorage.keyCode=cryptify(k,'secrets');
         unlocked=true;
-        // id('keyLabel').innerHTML='unlock';
         showDialog('keyDialog',false);
         loadListItems(); // WAS IN startup
         return true;
@@ -253,7 +245,7 @@ id('confirmKeyButton').addEventListener('click', function() {
 id('cancelKeyButton').addEventListener('click', function() {
     showDialog('keyDialog',false);
 })
-
+*/
 // POPULATE LIST
 function populateList(decrypt) {
     var listItem;
@@ -311,26 +303,6 @@ function populateList(decrypt) {
 	}
 }
 
-function checkItem(n) {
-    items[n].checked=!items[n].checked;
-    console.log(items[n].text+" checked is "+items[n].checked);
-    // update database
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-	var getRequest=dbObjectStore.get(items[n].id);
-	getRequest.onsuccess=function(event) {
-	    var data=event.target.result;
-        data.checked=items[n].checked;
-        var putRequest=dbObjectStore.put(data);
-		putRequest.onsuccess=function(event) {
-			console.log('item '+items[n].text+" updated");
-		};
-		putRequest.onerror=function(event) {console.log("error updating item "+item[n].text);};
-	}
-	getRequest.onerror=function(event) {console.log('error getting item')};
-}
-
 // LOAD LIST ITEMS
 function loadListItems() {
 	//  load children of list.id
@@ -345,15 +317,13 @@ function loadListItems() {
 		request.onsuccess=function() {
 			item=event.target.result;
 			console.log("list item "+item.text+"; type: "+item.type+"; owner: "+item.owner);
-			// var t=item.text;
-			// if(item.secure>0) t=cryptify(t,keyCode);
 			list.name=cryptify(item.text,keyCode);
 			list.type=item.type; // types 1-3 only
 		};
 		request.onerror=function() {console.log("error retrieving item "+list.id);}
 	}
 	else {
-	    // list.name="Lists";
+	    list.name="Slaanesh";
 	    list.type=1;
 	}
 	items=[];
@@ -371,12 +341,6 @@ function loadListItems() {
 		else {
 			console.log("No more entries! "+items.length+" items");
 			if(list.id===null) { // backup checks
-				/* temporary code to remove wrongly numbered data
-				if(items[0].id<1) {
-					alert('CORRUPTED DATA: CLEAR DATABASE');
-					request=dbObjectStore.clear();
-				}
-				*/
 				if(items.length<1) { // no data: restore backup?
 				    console.log("no data - restore backup?");
 				    // document.getElementById('importDialog').style.display='block';
@@ -475,27 +439,50 @@ function backup() {
 function cryptify(value,key) {
 	var i=0;
 	var result="";
-	// console.log("cryptify "+value+" using key "+key);
 	var k;
 	var v;
 	for (i=0;i<value.length;i++) {
 		k=key.charCodeAt(i%key.length);
 		v=value.charCodeAt(i);
-		// console.log("key["+i+"]: "+k+"; value["+i+"]: "+v);
 		result+=String.fromCharCode(k ^ v);
-		// console.log("result: "+result);
 	}
 	return result;
 };
 
 // KEY CHECK
+
+function tapKey(n) {
+	pin+=n;
+	console.log('pin: '+pin);
+	if(pin.length>3) { // 4 digits entered
+		console.log("keyCode: "+keyCode);
+		console.log("check: "+id('keyCheck').value);
+		if(keyCode===null) { // set keyCode - step 1
+			keyCode=pin;
+			id('keyTitle').innerHTML='confirm key';
+        	return;
+    	}
+    else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
+        window.localStorage.keyCode=cryptify(pin,'secrets');
+        unlocked=true;
+        showDialog('keyDialog',false);
+        loadListItems(); // WAS IN startup
+        return true;
+    }
+    else keyCode=null;
+    showDialog('keyDialog',false);
+    console.log("key is "+keyCode);
+    return false;
+	}
+} 
+
 function keyCheck() {
     console.log('KEY CHECK');
     if(unlocked) return true;
     id('keyTitle').innerText='enter key';
-    id('keyField').value='';
+    // id('keyField').value='';
     id('keyCheck').value=keyCode;
-    id('keyLabel').innerText='unlock';
+    // id('keyLabel').innerText='unlock';
     showDialog('keyDialog',true);
 }
 
@@ -503,7 +490,6 @@ function keyCheck() {
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
 console.log("last save: "+lastSave+"; saved key: "+keyCode);
-// keyCode=null; // **** DIAGNOSTICS ****
 if(!keyCode) { // first use - set a PIN
     keyCode=null;
     id('keyTitle').innerHTML='set a key';
@@ -515,9 +501,9 @@ else { // start-up - enter PIN
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
 	console.log("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='enter key';
-    id('keyField').value='';
+	pin='';
+    // id('keyField').value='';
     id('keyCheck').value=keyCode;
-    // id('keyLabel').innerText='unlock';
     showDialog('keyDialog',true);
 }
 // load items from database
@@ -526,17 +512,6 @@ request.onsuccess=function (event) {
 	db=event.target.result;
 	console.log("DB open");
 	list.id=list.owner=null;
-	/*
-	var dbTransaction=db.transaction('items','readwrite');
-	console.log("indexedDB transaction ready");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("indexedDB objectStore ready");
-	var request=dbObjectStore.openCursor();
-	request.onsuccess=function(event) {
-		list.id=list.owner=null;
-		loadListItems();
-	};
-	*/
 };
 request.onupgradeneeded=function(event) {
 	var dbObjectStore=event.currentTarget.result.createObjectStore("items",{

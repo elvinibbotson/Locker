@@ -157,6 +157,23 @@ li {
     float: right;
 }
 
+#keypad {
+	float: center;
+}
+
+.key-button {
+	width: 70px;
+	height: 70px;
+	border: 2px solid white;
+	border-radius: 10%;
+	margin: 15px;
+	padding: 5px;
+	color: white;
+	font-size: 3em;
+	font-weight: bold;
+	background: gray;
+}
+
 .round-button {
 	display: block;
 	position: fixed;
@@ -188,72 +205,33 @@ li {
 	color: white;
 	background-color:gray;
 }
-/*
-#addActionGroup {
-    float: right;
-    right: 0;
-}
-
-#confirmAddButton {
-    background: url(okButton24px.svg) center center no-repeat;
-}
-*/
-/*
-#cancelAddItemButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
-
-#addItemActionGroup {
-    float: right;
-    right: 0;
-}
-
-#confirmAddItemButton {
-    background: url(okButton24px.svg) center center no-repeat;
-}
-*/
-#cancelListButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
 
 #deleteListButton {
 	background: url(deleteButton24px.svg) center center no-repeat;
 }
-/*
-#confirmNoteGroup {
-    float: right;
-    right: 10px;
+
+#cancelListButton {
+    background: url(cancelButton24px.svg) center center no-repeat;
 }
-*/
 
 #confirmListButton {
     background: url(okButton24px.svg) center center no-repeat;
+}
+
+#deleteNoteButton {
+	background: url(deleteButton24px.svg) center center no-repeat;
 }
 
 #cancelNoteButton {
     background: url(cancelButton24px.svg) center center no-repeat;
 }
 
-#deleteNoteButton {
-	background: url(deleteButton24px.svg) center center no-repeat;
-}
-/*
-#confirmItemGroup {
-    float: right;
-    right: 10px;
-}
-*/
 #confirmNoteButton {
     background: url(okButton24px.svg) center center no-repeat;
 }
 
 #cancelKeyButton {
     background: url(cancelButton24px.svg) center center no-repeat;
-}
-
-#confirmKeyGroup {
-    float: right;
-    right: 10px;
 }
 
 #confirmKeyButton {

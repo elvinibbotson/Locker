@@ -52,13 +52,19 @@
 <div id='keyDialog' class='dialog'>
     <div class='dialog-title'>
         <span id='keyTitle'>PIN: </span>
-        <input type="password" id="keyField" size="4"/>
+        <!--input type="password" inputmode='numeric' id="keyField" size="4"/-->
     </div>
     <input type="hidden" id="keyCheck" value="****">
-    <div class="dialog-buttons">
+    <!--div class="dialog-buttons">
     	<button id="confirmKeyButton" class="icon-button"></button>
         <button id="cancelKeyButton" class="icon-button"></button>
-	</div>
+	</div-->
+	<center div id='keypad'>
+		<button class='key-button' onclick='tapKey("1");'>1</button><button class='key-button' onclick='tapKey("2");'>2</button><button class='key-button' onclick='tapKey("3");'>3</button><br>
+		<button class='key-button' onclick='tapKey("4");'>4</button><button class='key-button' onclick='tapKey("5");'>5</button><button class='key-button' onclick='tapKey("6");'>6</button><br>
+		<button class='key-button' onclick='tapKey("7");'>7</button><button class='key-button' onclick='tapKey("8");'>8</button><button class='key-button' onclick='tapKey("9");'>9</button><br>
+		<button class='key-button' onclick='tapKey("0");'>0</button>
+	</center>
 </div>
 
 <div id="importDialog" class="dialog">
