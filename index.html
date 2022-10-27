@@ -21,52 +21,31 @@
 <div id='buttonNew' class='round-button'><img src='newButton24px.svg'/></div>
 
 <div id="addDialog" class='dialog'>
-	<div id='typeChooser'>
-	    <input id='listChoice' type='radio' name='type' value='list'>
-	    <label for='listChoice'>list</label><br>
-	    <input id='itemChoice' type='radio' name='type' value='item'>
-	    <label for='itemChoice'>note</label><br>
-	</div>
 	<div class="dialog-buttons">
+		<button id='addNoteButton'>note</button>
+		<button id='addListButton'>list&nbsp;</button>
 		<button id="cancelAddButton" class="icon-button"></button>
-		<label for='cancelAddButton'>cancel</label>
-	    <div id='addActionGroup' class='action-group'>
-	        <label for='confirmAddButton'>ADD</label>
-		    <button id="confirmAddButton" class="icon-button"></button>
-		</div>
 	</div>
 </div>
-
-<!--div id='addItemDialog' class='dialog'>
-    <div id='addItemTitle' class='dialog-title'>add</div>
-    <p><input type="text" id="addItemField" size="15"/></p>
-    <div class="dialog-buttons">
-		<button id="cancelAddItemButton" class="icon-button"></button>
-		<label for='cancelAddItemButton'>cancel</label>
-		<div id='addItemActionGroup'>
-	        <label for='confirmAddItemButton'>add</label>
-		    <button id="confirmAddItemButton" class="icon-button"></button>
-		</div>
-	</div>
-</div-->
 
 <div id='listDialog' class='dialog'>
     <div id='listDialogTitle' class='dialog-title'>list</div>
     <p><input type="text" id="listField" size="15"/></p>
     <div class="dialog-buttons">
+    	<button id="confirmListButton" class="icon-button"></button>
 		<button id="cancelListButton" class="icon-button"></button>
 		<button id="deleteListButton" class="icon-button"></button>
-		<button id="confirmListButton" class="icon-button"></button>
 	</div>
 </div>
 
 <div id='noteDialog' class='dialog'>
     <div id='noteTitle' class='dialog-title'>note</div>
     <textarea id="noteField" rows='5' cols='30'></textarea>
+    <br>
     <div class="dialog-buttons">
+    	<button id="confirmNoteButton" class="icon-button"></button>
         <button id="cancelNoteButton" class="icon-button"></button>
 		<button id="deleteNoteButton" class="icon-button"></button>
-		<button id="confirmNoteButton" class="icon-button"></button>
 	</div>
 </div>
 
@@ -77,12 +56,8 @@
     </div>
     <input type="hidden" id="keyCheck" value="****">
     <div class="dialog-buttons">
+    	<button id="confirmKeyButton" class="icon-button"></button>
         <button id="cancelKeyButton" class="icon-button"></button>
-		<!--label for='cancelKeyButton'>cancel</label-->
-		<!--div id='confirmKeyGroup'>
-	        <label for='confirmKeyButton' id='keyLabel'>UNLOCK</label-->
-		    <button id="confirmKeyButton" class="icon-button"></button>
-		<!--/div-->
 	</div>
 </div>
 
@@ -91,7 +66,6 @@
 	<input type="file" id="fileChooser">
     <div class="dialog-buttons">
 		<button id="cancelImportButton" class="icon-button"></button>
-		<label for='cancelImportButton'>cancel</label>
 	</div>
 </div>
 

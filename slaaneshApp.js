@@ -47,7 +47,7 @@ id('main').addEventListener('touchend', function(event) {
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
 	if(depth>0) { // list heading - show item edit dialog
-		id(listField.value=list.name); // cryptify(item.text,keyCode));
+		id(listField.value=list.name);
 		console.log('edit list header - '+items.length+' items');
 		for(var i in items) console.log('item '+i+': '+items[i].text);
 		if(items.length>0) {
@@ -84,8 +84,8 @@ function showAddDialog() {
 
 id('buttonNew').addEventListener('click', function(){
     if(depth<2 && list.type>0) { // list above depth 2 - can add sub-list
-        id('itemChoice').disabled=(depth<1);
-        id('listChoice').checked=true;
+        // id('itemChoice').disabled=(depth<1);
+        // id('listChoice').checked=true;
         showDialog('addDialog',true);
     }
     else {
@@ -100,87 +100,55 @@ id('cancelAddButton').addEventListener('click',function() {
     showDialog('addDialog',false);
 })
 
-id('confirmAddButton').addEventListener('click',function() {
-    item={};
-    item.owner=list.id;
-    item.type=(id('listChoice').checked)?1:0;
-    console.log("item type: "+item.type);
-    if(item.type<1) { // add note
-        id('noteField').value='';
-        id('deleteNoteButton').style.display='none';
-        showDialog('noteDialog',true);
-    }
-    else { // list or checklist
-        id('listField').value='';
-        id('deleteListButton').style.display='none';
-        showDialog('listDialog',true);
-    }
-})
-/*    
-function showAddItemDialog() {
-    item={};
-    item.owner=list.id;
-    item.type=list.type-1;
-    id('addItemField').value='';
-    showDialog('addItemDialog',true);
-}
-
-id('cancelAddItemButton').addEventListener('click',function() {
-    showDialog('addItemDialog',false);
+id('addListButton').addEventListener('click',function() {
+	id('listField').value='';
+    id('deleteListButton').style.display='none';
+    showDialog('listDialog',true);
 })
 
-id('confirmAddItemButton').addEventListener('click',function() {
-	item.text=id('addItemField').value,keyCode;
-    console.log("add "+item.text+' type: '+item.type);
-    // add new item;
-    console.log("update list "+list.id);
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-    item.index=items.length;
-    items.push(item);
-    item.text=cryptify(id('addItemField').value,keyCode); // save encrypted text to database
-    var addRequest=dbObjectStore.add(item);
-	addRequest.onsuccess=function(event) {
-		item.id=event.target.result;
-		console.log("new item added - id is "+item.id);
-	};
-	addRequest.onerror=function(event) {console.log("error adding new item");};
-    showDialog('addItemDialog',false);
-    itemIndex=null;
-    currentListItem=null;
-    populateList(); // DECRYPT?
+id('addNoteButton').addEventListener('click',function() {
+	id('noteField').value='';
+    id('deleteNoteButton').style.display='none';
+    showDialog('noteDialog',true);
 })
-*/
+
 // LIST 
 id('cancelListButton').addEventListener('click',function() {
     showDialog('editItemDialog',false);
 })
 
 id('confirmListButton').addEventListener('click', function() {
-    if(item.type>3) item.text=cryptify(id('editItemField').value,keyCode);
-    else item.text=id('editItemField').value;
-    console.log('edit to '+item.text);
+    item.text=cryptify(id('listField').value,keyCode);
+    console.log('encrypt to '+item.text);
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
-	var getRequest=dbObjectStore.get(item.id);
-	getRequest.onsuccess=function(event) {
-	    var data=event.target.result;
-        data.text=item.text;
-        var putRequest=dbObjectStore.put(data);
-		putRequest.onsuccess=function(event) {
-			console.log('item '+item.index+" updated");
-			showDialog('editItemDialog',false);
-        	populateList(); // DECRYPT?
-		};
-		putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
+	if(item.id) { // edit existing list name
+		var getRequest=dbObjectStore.get(item.id);
+		getRequest.onsuccess=function(event) {
+	    	var data=event.target.result;
+        	data.text=item.text;
+        	var putRequest=dbObjectStore.put(data);
+			putRequest.onsuccess=function(event) {
+				console.log('item '+item.index+" updated");
+				showDialog('editItemDialog',false);
+        		// populateList(); // DECRYPT?
+        		loadListItems();
+			};
+			putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
+		}
+		getRequest.onerror=function(event) {console.log('error getting item')};
 	}
-	getRequest.onerror=function(event) {console.log('error getting item')};
-	/* move into putRequest.onsuccess, above
-	showDialog('editItemDialog',false);
-	populateList();
-	*/
+	else { // add new list
+		var addRequest=dbObjectStore.add(item);
+		addRequest.onsuccess=function(event) {
+			console.log('new list added');
+			showDialog('listDialog',false);
+			loadListItems();
+		}
+		addRequest.onerror=function(event) {cosnole.log('error adding new list');}
+	}
+	
 })
 
 id('deleteListButton').addEventListener('click',function() {
@@ -217,9 +185,8 @@ id('confirmNoteButton').addEventListener('click', function() {
         item.owner=list.id;
         item.type=list.type-1;
     }
-    if(item.type>3) item.text=cryptify(id('noteField').value,keyCode);
-    else item.text=id('noteField').value;
-    console.log("note content: "+item.text);
+    item.text=cryptify(id('noteField').value,keyCode);
+    console.log("encrypted note: "+item.text);
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
@@ -238,32 +205,10 @@ id('confirmNoteButton').addEventListener('click', function() {
         getRequest.onerror=function(event) {console.log("error getting item to update "+item.index);}
         items[item.index].text=item.text;
     }
-    else {
-        if(currentListItem) { // inserting new note item
-            for(var i=itemIndex;i<items.length;i++) { // increment .index of following items
-                items[i].index++;
-                var getRequest=dbObjectStore.get(items[i].id);
-                getRequest.onsuccess=function(event) {
-                    var data=event.target.result;
-                    data.index++;
-                    var putRequest=dbObjectStore.put(data);
-		            putRequest.onsuccess=function(event) {
-		    	        console.log('item '+item.index+" updated");
-		            };
-		            putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
-                }
-		        getRequest.onerror=function(event) {console.log("error getting item to update "+item.index);};
-            }
-            item.index=itemIndex;
-            items.splice(itemIndex,0,item);
-        }
-        else { // no item selected - add at end of list
-            item.index=items.length; // *** OR INSERT INTO ITEMS
-            items.push(item);
-        }
+    else { // add new note
         var addRequest=dbObjectStore.add(item);
 	    addRequest.onsuccess=function(event) {
-		    items[item.index].id=item.id=event.target.result;
+		    item.id=event.target.result;
 		    console.log("new item added - id is "+item.id);
 	    }
 	    addRequest.onerror=function(event) {console.log("error adding new item");};
@@ -271,10 +216,10 @@ id('confirmNoteButton').addEventListener('click', function() {
     showDialog('noteDialog',false);
     itemIndex=null;
     currentListItem=null;
-    populateList(); // DECRYPT?
+    loadListItems();
 })
 
-// KEY INPUT
+// KEYCODE INPUT
 id('confirmKeyButton').addEventListener('click', function() {
     console.log("keyCode: "+keyCode+" check: "+id('keyCheck').value+" input: "+id('keyField').value);
     var k=id('keyField').value;
@@ -358,6 +303,7 @@ function populateList(decrypt) {
 			listItem.addEventListener('click',function() {
 				itemIndex=this.index;
 				id('noteField').innerText=items[i].text;
+				id('deleteNoteButton').style.display='block';
 				showDialog('noteDialog',true);
 			})
 		}
