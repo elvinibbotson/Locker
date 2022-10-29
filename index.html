@@ -22,9 +22,9 @@
 
 <div id="addDialog" class='dialog'>
 	<div class="dialog-buttons">
-		<button id='addNoteButton'>note</button>
-		<button id='addListButton'>list&nbsp;</button>
-		<button id="cancelAddButton" class="icon-button"></button>
+		<button id='addListButton' class='text-button'>LIST</button>
+		<button id='addNoteButton' class='text-button'>NOTE</button>
+		<button id="cancelAddButton" class="text-button">CANCEL</button>
 	</div>
 </div>
 
@@ -52,19 +52,22 @@
 <div id='keyDialog' class='dialog'>
     <div class='dialog-title'>
         <span id='keyTitle'>PIN: </span>
-        <!--input type="password" inputmode='numeric' id="keyField" size="4"/-->
+        <span id='pinField'></span>
     </div>
     <input type="hidden" id="keyCheck" value="****">
-    <!--div class="dialog-buttons">
-    	<button id="confirmKeyButton" class="icon-button"></button>
-        <button id="cancelKeyButton" class="icon-button"></button>
-	</div-->
 	<center div id='keypad'>
+		<br><br>
 		<button class='key-button' onclick='tapKey("1");'>1</button><button class='key-button' onclick='tapKey("2");'>2</button><button class='key-button' onclick='tapKey("3");'>3</button><br>
 		<button class='key-button' onclick='tapKey("4");'>4</button><button class='key-button' onclick='tapKey("5");'>5</button><button class='key-button' onclick='tapKey("6");'>6</button><br>
 		<button class='key-button' onclick='tapKey("7");'>7</button><button class='key-button' onclick='tapKey("8");'>8</button><button class='key-button' onclick='tapKey("9");'>9</button><br>
 		<button class='key-button' onclick='tapKey("0");'>0</button>
 	</center>
+</div>
+
+<div id='dataDialog' class='dialog'>
+	<button id='backupButton' class='text-button'>BACKUP</button>
+	<button id='importButton' class='text-button'>IMPORT</button>
+	<button id='dataCancelButton' class='text-button'>CANCEL</button>
 </div>
 
 <div id="importDialog" class="dialog">

@@ -55,7 +55,7 @@ id('heading').addEventListener('click',function() {
 		else id('deleteListButton').style.display='block';
 		showDialog('listDialog',true);
 	}
-	else backup(); // depth 0 = top level - force backup
+	else showDialog('dataDialog',true);
 });
 
 // SHOW/HIDE DIALOG
@@ -127,7 +127,6 @@ id('confirmListButton').addEventListener('click', function() {
 			putRequest.onsuccess=function(event) {
 				console.log('item '+item.index+" updated");
 				showDialog('editItemDialog',false);
-        		// populateList(); // DECRYPT?
         		loadListItems();
 			};
 			putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
@@ -213,39 +212,6 @@ id('confirmNoteButton').addEventListener('click', function() {
     loadListItems();
 })
 
-// KEYCODE INPUT
-/*
-id('confirmKeyButton').addEventListener('click', function() {
-    console.log("keyCode: "+keyCode+" check: "+id('keyCheck').value+" input: "+id('keyField').value);
-    var k=id('keyField').value;
-    if(keyCode===null) { // set keyCode - step 1
-        if(k.length<4) {
-            alert('4 digits or more');
-            return;
-        }
-        id('keyCheck').value=keyCode=k;
-        id('keyTitle').innerHTML='confirm key';
-        id('keyField').value='';
-        id('keyLabel').innerHTML='confirm';
-        return;
-    }
-    else if(k==id('keyCheck').value) { // set keyCode step 2 or unlock
-        window.localStorage.keyCode=cryptify(k,'secrets');
-        unlocked=true;
-        showDialog('keyDialog',false);
-        loadListItems(); // WAS IN startup
-        return true;
-    }
-    else keyCode=null;
-    showDialog('keyDialog',false);
-    console.log("key is "+keyCode);
-    return false;
-})
-
-id('cancelKeyButton').addEventListener('click', function() {
-    showDialog('keyDialog',false);
-})
-*/
 // POPULATE LIST
 function populateList(decrypt) {
     var listItem;
@@ -265,8 +231,8 @@ function populateList(decrypt) {
 		console.log('item '+i+': '+items[i].text);
 	}
 	items.sort(function(a,b){
-		if(a.text<b.text) return -1;
-		if(a.text>b.text) return 1;
+		if(a.text.toUpperCase()<b.text.toUpperCase()) return -1;
+		if(a.text.toUpperCase()>b.text.toUpperCase()) return 1;
 		return 0;
 	}); // sort alphabetically
 	for(var i in items) {
@@ -357,6 +323,11 @@ function loadListItems() {
 	}
 }
 
+// DATA
+id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
+id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
+id('dataCancelButton').addEventListener('click',function() {showDialog('dataDialog',false)});
+
 // RESTORE BACKUP
 id("fileChooser").addEventListener('change', function() {
 	var file=id('fileChooser').files[0];
@@ -380,7 +351,7 @@ id("fileChooser").addEventListener('change', function() {
 			request.onerror=function(e) {console.log("error adding item");};
 		}
 		showDialog('importDialog',false);
-		alert("backup imported - restart");
+		alert("data imported - restart");
   	});
   	fileReader.readAsText(file);
 });
@@ -453,6 +424,7 @@ function cryptify(value,key) {
 
 function tapKey(n) {
 	pin+=n;
+	id('pinField').innerHTML+='*';
 	console.log('pin: '+pin);
 	if(pin.length>3) { // 4 digits entered
 		console.log("keyCode: "+keyCode);
@@ -480,9 +452,7 @@ function keyCheck() {
     console.log('KEY CHECK');
     if(unlocked) return true;
     id('keyTitle').innerText='enter key';
-    // id('keyField').value='';
     id('keyCheck').value=keyCode;
-    // id('keyLabel').innerText='unlock';
     showDialog('keyDialog',true);
 }
 
@@ -492,17 +462,17 @@ keyCode=window.localStorage.keyCode; // load any saved key
 console.log("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
     keyCode=null;
-    id('keyTitle').innerHTML='set a key';
-    id('keyLabel').innerHTML='next';
+    id('keyTitle').innerHTML='set a PIN';
+    id(pinField).innerHTML='';
     showDialog('keyDialog',true);
 }
 else { // start-up - enter PIN
 	console.log('encrypted keyCode: '+keyCode);
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
 	console.log("decoded keyCode: "+keyCode);
-	id('keyTitle').innerText='enter key';
+	id('keyTitle').innerText='PIN';
+	id('pinField').innerHTML='';
 	pin='';
-    // id('keyField').value='';
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
 }

@@ -174,6 +174,18 @@ li {
 	background: gray;
 }
 
+.text-button {
+	border: 2px solid white;
+	border-radius: 10%;
+	margin: 15px;
+	padding: 5px;
+	font-size:1.2em;
+	font-weight: bold;
+	color: white;
+	background-color:gray;
+	float: right;
+}
+
 .round-button {
 	display: block;
 	position: fixed;
@@ -193,17 +205,6 @@ li {
 	width: 24px;
 	height: 24px;
 	padding: 13px;
-}
-
-#cancelAddButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
-
-#addListButton, #addNoteButton {
-	font-size:1.5em;
-	font-weight: bold;
-	color: white;
-	background-color:gray;
 }
 
 #deleteListButton {
@@ -230,12 +231,23 @@ li {
     background: url(okButton24px.svg) center center no-repeat;
 }
 
+#pinField {
+	font-size: 2em;
+	font-weight: bold;
+	color: white;
+	background-color: gray;
+}
+
 #cancelKeyButton {
     background: url(cancelButton24px.svg) center center no-repeat;
 }
 
 #confirmKeyButton {
     background: url(okButton24px.svg) center center no-repeat;
+}
+
+#fileChooser {
+	font-size: 1.5em;
 }
 
 #cancelImportButton {
