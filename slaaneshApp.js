@@ -146,8 +146,26 @@ id('confirmListButton').addEventListener('click', function() {
 })
 
 id('deleteListButton').addEventListener('click',function() {
-	if(items.length<1) console.log('DELETE LIST');
-	else alert('CAN ONLY DELETE EMPTY LISTS');
+	if(items.length>0) {
+		alert('CAN ONLY DELETE EMPTY LISTS');
+		return;
+	}
+	var dbTransaction=db.transaction('items',"readwrite");
+	var dbObjectStore=dbTransaction.objectStore('items');
+	console.log("database ready to delete list item");
+	console.log('delete list item '+itemIndex+' id: '+list.id); // items[itemIndex].id);
+	var delRequest=dbObjectStore.delete(list.id); // items[itemIndex].id);
+	delRequest.onsuccess=function() {
+	    console.log('deleted from database');
+	    showDialog('listDialog',false);
+	    depth--;
+	}
+	delRequest.onerror=function(event) {console.log('delete failed')};
+    items.splice(itemIndex,1);
+    console.log("delete complete");
+    populateList();
+    itemIndex=null;
+    currentListItem=null;
 })
 
 // NOTE
@@ -163,6 +181,7 @@ id('deleteNoteButton').addEventListener('click', function() {
 	var delRequest=dbObjectStore.delete(items[itemIndex].id);
 	delRequest.onsuccess=function() {
 	    console.log('deleted from database');
+	    showDialog('noteDialog',false);
 	}
 	delRequest.onerror=function(event) {console.log('delete failed')};
     items.splice(itemIndex,1);
@@ -249,7 +268,6 @@ function populateList(decrypt) {
 		    	list.type=items[this.index].type;
 		    	list.name=items[this.index].text;
 		    	list.owner=items[this.index].owner;
-		    	if(!keyCheck()) return; // require key to open ********* NO LONGER NEEDED - GET PIN AT START ********
 		    	console.log('open list '+list.name+' id:'+list.id+' type:'+list.type+' owner: '+list.owner);
 		    	depth++;
 		    	path.push(list.name);
