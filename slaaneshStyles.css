@@ -7,7 +7,7 @@ html, body {
   font-weight: 400;
   font-display: optional;
   color: white;
-  background-color: black;
+  background-color: #333;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
@@ -44,14 +44,7 @@ input[type=text] {
 	font-size: 1.5em;
 	height: 24px;
 }
-/*
-input[type=password] {
-	font-size: 1.5em;
-	height: 24px;
-	width: 150px;
-	margin-left: 20px;
-}
-*/
+
 textarea {
     font-size: 1.2em;
 }
@@ -85,7 +78,7 @@ textarea {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background-color: &333;
+  background-color: #333;
 }
   
 #list {
@@ -95,6 +88,7 @@ textarea {
     flex-direction: column;
     transition: opacity 0.2s ease-in-out;
     padding: 0 0.5em;
+    background-color: #333;
 }
 
 
