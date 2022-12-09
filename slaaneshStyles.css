@@ -49,6 +49,87 @@ textarea {
     font-size: 1.2em;
 }
 
+li {
+	width: 100%;
+	margin-bottom: 5px;
+	text-align: left;
+	font-size: 1.2em;
+	color: white;
+	display: block;
+}
+
+.dialog {
+  background: dimgray;
+  position: absolute;
+  top: 0;
+  padding: 5px;
+  width: 100%;
+  z-index: 20;
+  display: none;
+}
+
+.dialog-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.dialog-buttons {
+    width: 90%;
+    padding: 10px;
+    margin: 15px;
+}
+
+.icon-button {
+    width: 36px;
+    height: 24px;
+    border: none;
+    padding: 12px;
+}
+
+.key-button {
+	width: 70px;
+	height: 70px;
+	border: 2px solid white;
+	border-radius: 10px;
+	margin: 15px;
+	padding: 5px;
+	color: white;
+	font-size: 3em;
+	font-weight: bold;
+	background: gray;
+}
+
+.text-button {
+	border: 2px solid white;
+	border-radius: 10px;
+	margin: 10px;
+	padding: 5px;
+	font-size:1.2em;
+	font-weight: bold;
+	color: white;
+	background-color:gray;
+}
+
+.round-button {
+	display: block;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	width: 50px;
+	height: 50px;
+	border: 2px solid white;
+	border-radius: 10px;
+	background: gray;
+	z-index: 50;
+}
+
+.round-button img {
+	display: block;
+	width: 24px;
+	height: 24px;
+	padding: 13px;
+}
+
 #header {
     position: fixed;
     top: 0;
@@ -91,115 +172,23 @@ textarea {
     background-color: #333;
 }
 
-
-li {
-	width: 100%;
-	margin-bottom: 5px;
-	text-align: left;
-	font-size: 1.2em;
-	color: white;
-	display: block;
-}
-
-.dialog {
-  background: dimgray;
-  position: absolute;
-  top: 0;
-  padding: 5px;
-  width: 100%;
-  z-index: 20;
-  display: none;
-}
-
-.dialog-title {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.dialog-buttons {
-    width: 90%;
-    padding: 10px;
-    margin: 15px;
-}
-
-.icon-button {
-    width: 36px;
-    height: 24px;
-    border: none;
-    padding: 12px;
-    float: right;
-}
-
 #keypad {
 	float: center;
 }
 
-.key-button {
-	width: 70px;
-	height: 70px;
-	border: 2px solid white;
-	border-radius: 10px;
-	margin: 15px;
-	padding: 5px;
-	color: white;
-	font-size: 3em;
-	font-weight: bold;
-	background: gray;
+#deleteListButton, #deleteNoteButton {
+	float: left;
+	margin-right: 48px;
+	background: url(deleteButton24px.svg) center center no-repeat;
 }
 
-.text-button {
-	border: 2px solid white;
-	border-radius: 10px;
-	margin: 15px;
-	padding: 5px;
-	font-size:1.2em;
-	font-weight: bold;
-	color: white;
-	background-color:gray;
+#listAddButton, #noteAddButton {
 	float: right;
+    background: url(addButton24px.svg) center center no-repeat;
 }
 
-.round-button {
-	display: block;
-	position: fixed;
-	right: 20px;
-	bottom: 20px;
-	width: 50px;
-	height: 50px;
-	border: 2px solid white;
-	border-radius: 10px;
-	background: gray;
-	z-index: 50;
-}
-
-.round-button img {
-	display: block;
-	width: 24px;
-	height: 24px;
-	padding: 13px;
-}
-
-#deleteListButton {
-	background: url(deleteButton24px.svg) center center no-repeat;
-}
-
-#cancelListButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
-
-#confirmListButton {
-    background: url(okButton24px.svg) center center no-repeat;
-}
-
-#deleteNoteButton {
-	background: url(deleteButton24px.svg) center center no-repeat;
-}
-
-#cancelNoteButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
-
-#confirmNoteButton {
+#listSaveButton, #noteSaveButton {
+	float: right;
     background: url(okButton24px.svg) center center no-repeat;
 }
 
@@ -210,18 +199,10 @@ li {
 	background-color: gray;
 }
 
-#cancelKeyButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
-}
-
 #confirmKeyButton {
     background: url(okButton24px.svg) center center no-repeat;
 }
 
 #fileChooser {
 	font-size: 1.5em;
-}
-
-#cancelImportButton {
-    background: url(cancelButton24px.svg) center center no-repeat;
 }

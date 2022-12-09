@@ -16,15 +16,13 @@
 
 <div id="main">
 	<ul id="list"></ul>
-</div>
 
-<div id='buttonNew' class='round-button'><img src='newButton24px.svg'/></div>
+<div id='buttonNew' class='round-button'><img src='addButton24px.svg'/></div>
 
 <div id="addDialog" class='dialog'>
 	<div class="dialog-buttons">
-		<button id='addListButton' class='text-button'>LIST</button>
+		add new <button id='addListButton' class='text-button'>LIST</button>
 		<button id='addNoteButton' class='text-button'>NOTE</button>
-		<button id="cancelAddButton" class="text-button">CANCEL</button>
 	</div>
 </div>
 
@@ -32,8 +30,8 @@
     <div id='listDialogTitle' class='dialog-title'>list</div>
     <p><input type="text" id="listField" size="15"/></p>
     <div class="dialog-buttons">
-    	<button id="confirmListButton" class="icon-button"></button>
-		<button id="cancelListButton" class="icon-button"></button>
+    	<button id="listAddButton" class="icon-button"></button>
+    	<button id="listSaveButton" class="icon-button"></button>
 		<button id="deleteListButton" class="icon-button"></button>
 	</div>
 </div>
@@ -43,8 +41,8 @@
     <textarea id="noteField" rows='5' cols='30'></textarea>
     <br>
     <div class="dialog-buttons">
-    	<button id="confirmNoteButton" class="icon-button"></button>
-        <button id="cancelNoteButton" class="icon-button"></button>
+    	<button id="noteAddButton" class="icon-button"></button>
+    	<button id="noteSaveButton" class="icon-button"></button>
 		<button id="deleteNoteButton" class="icon-button"></button>
 	</div>
 </div>
@@ -66,18 +64,14 @@
 
 <div id='dataDialog' class='dialog'>
 	<button id='backupButton' class='text-button'>BACKUP</button>
-	<button id='importButton' class='text-button'>IMPORT</button>
-	<button id='dataCancelButton' class='text-button'>CANCEL</button>
+	<button id='importButton' class='text-button'>IMPORT</button> data
 </div>
 
 <div id="importDialog" class="dialog">
 	<div class="dialog-title">Load from file</div>
 	<input type="file" id="fileChooser">
-    <div class="dialog-buttons">
-		<button id="cancelImportButton" class="icon-button"></button>
-	</div>
 </div>
-
+</div>
 <script src="slaaneshApp.js" async></script>
 </body>
 </html>

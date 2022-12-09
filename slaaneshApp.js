@@ -40,6 +40,7 @@ id('main').addEventListener('touchend', function(event) {
         console.log('list.id: '+list.id+' path: '+path+' depth: '+depth);
         loadListItems();
     }
+    else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
 })
 
 // TAP ON HEADER
@@ -53,6 +54,8 @@ id('heading').addEventListener('click',function() {
 			console.log('disable delete');
 		}
 		else id('deleteListButton').style.display='block';
+		id('listAddButton').style.display='none';
+		id('listSaveButton').style.display='block';
 		showDialog('listDialog',true);
 	}
 	else showDialog('dataDialog',true);
@@ -86,18 +89,23 @@ id('buttonNew').addEventListener('click', function(){
     else {
         item=null;
         id('noteField').value='';
+        id('deleteNoteButton').style.display='none';
+        id('noteAddButton').style.display='block';
+        id('noteSaveButton').style.display='none';
         showDialog('noteDialog',true);
     }
 })
-
+/*
 id('cancelAddButton').addEventListener('click',function() {
     // id('addDialog').style.display='none';
     showDialog('addDialog',false);
 })
-
+*/
 id('addListButton').addEventListener('click',function() {
 	id('listField').value='';
     id('deleteListButton').style.display='none';
+    id('listAddButton').style.display='block';
+	id('listSaveButton').style.display='none';
     showDialog('listDialog',true);
 })
 
@@ -107,42 +115,40 @@ id('addNoteButton').addEventListener('click',function() {
     showDialog('noteDialog',true);
 })
 
-// LIST 
+// LIST
+/*
 id('cancelListButton').addEventListener('click',function() {
     showDialog('editItemDialog',false);
 })
-
-id('confirmListButton').addEventListener('click', function() {
+*/
+id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
+    item={};
+    item.owner=list.id; // NEW
+    item.type=0; // NEW
     item.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+item.text);
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
-	if(item.id) { // edit existing list name
-		var getRequest=dbObjectStore.get(item.id);
-		getRequest.onsuccess=function(event) {
-	    	var data=event.target.result;
-        	data.text=item.text;
-        	var putRequest=dbObjectStore.put(data);
-			putRequest.onsuccess=function(event) {
-				console.log('item '+item.index+" updated");
-				showDialog('editItemDialog',false);
-        		loadListItems();
-			};
-			putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
-		}
-		getRequest.onerror=function(event) {console.log('error getting item')};
+	var addRequest=dbObjectStore.add(item);
+	addRequest.onsuccess=function(event) {
+		console.log('new list added');
+		showDialog('listDialog',false);
+		loadListItems();
 	}
-	else { // add new list
-		var addRequest=dbObjectStore.add(item);
-		addRequest.onsuccess=function(event) {
-			console.log('new list added');
-			showDialog('listDialog',false);
-			loadListItems();
-		}
-		addRequest.onerror=function(event) {cosnole.log('error adding new list');}
-	}
-	
+	 addRequest.onerror=function(event) {cosnole.log('error adding new list');}
+})
+
+id('listSaveButton').addEventListener('click', function() {
+	item.text=cryptify(id('listField').value,keyCode);
+    console.log('encrypt to '+item.text);
+    var putRequest=dbObjectStore.put(data);
+	putRequest.onsuccess=function(event) {
+		console.log('item '+item.index+" updated");
+		showDialog('editItemDialog',false);
+        loadListItems();
+	};
+	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
 })
 
 id('deleteListButton').addEventListener('click',function() {
@@ -169,10 +175,11 @@ id('deleteListButton').addEventListener('click',function() {
 })
 
 // NOTE
+/*
 id('cancelNoteButton').addEventListener('click',function() {
     showDialog('noteDialog',false);
 })
-
+*/
 id('deleteNoteButton').addEventListener('click', function() {
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
@@ -191,7 +198,7 @@ id('deleteNoteButton').addEventListener('click', function() {
     currentListItem=null;
 })
 
-id('confirmNoteButton').addEventListener('click', function() {
+id('noteAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
     if(item===null) {
         item={};
         item.owner=list.id;
@@ -202,20 +209,23 @@ id('confirmNoteButton').addEventListener('click', function() {
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
-	console.log('item.id: '+item.id+' itemIndex: '+itemIndex);
+	// console.log('item.id: '+item.id+' itemIndex: '+itemIndex);
     if(item.id) { // editing existing note item
+        /* JUST PUT ITEM
         var getRequest=dbObjectStore.get(item.id);
         getRequest.onsuccess=function(event) {
             var data=event.target.result;
             data.text=item.text;
-            var putRequest=dbObjectStore.put(data);
+            */
+            var putRequest=dbObjectStore.put(item);
 	        putRequest.onsuccess=function(event) {
 			    console.log('item '+item.index+" updated");
 		    };
 		    putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
-        }
-        getRequest.onerror=function(event) {console.log("error getting item to update "+item.index);}
-        items[item.index].text=item.text;
+        
+
+        // getRequest.onerror=function(event) {console.log("error getting item to update "+item.index);}
+        // items[item.index].text=item.text;
     }
     else { // add new note
         var addRequest=dbObjectStore.add(item);
@@ -229,6 +239,10 @@ id('confirmNoteButton').addEventListener('click', function() {
     itemIndex=null;
     currentListItem=null;
     loadListItems();
+})
+
+id('noteSaveButton').addEventListener('click', function() {
+	
 })
 
 // POPULATE LIST
@@ -278,8 +292,12 @@ function populateList(decrypt) {
 		else { // tap on note to edit it
 			listItem.addEventListener('click',function() {
 				itemIndex=this.index;
-				id('noteField').innerText=items[i].text;
+				item=items[this.index];
+				console.log('edit note '+i+': '+item.text);
+				id('noteField').innerText=item.text;
 				id('deleteNoteButton').style.display='block';
+				id('noteAddButton').style.display='none';
+				id('noteSaveButton').style.display='block';
 				showDialog('noteDialog',true);
 			})
 		}
@@ -344,7 +362,7 @@ function loadListItems() {
 // DATA
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
 id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
-id('dataCancelButton').addEventListener('click',function() {showDialog('dataDialog',false)});
+/* id('dataCancelButton').addEventListener('click',function() {showDialog('dataDialog',false)}); */
 
 // RESTORE BACKUP
 id("fileChooser").addEventListener('change', function() {
@@ -374,11 +392,11 @@ id("fileChooser").addEventListener('change', function() {
   	fileReader.readAsText(file);
 });
 
-// CANCEL RESTORE
+/* CANCEL RESTORE
 id('cancelImportButton').addEventListener('click', function() {
     showDialog('importDialog',false);
 });
-
+*/
 // BACKUP
 function backup() {
   	console.log("EXPORT");
