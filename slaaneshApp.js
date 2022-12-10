@@ -74,24 +74,31 @@ function showDialog(dialog,show) {
         currentDialog=null;
     }
 }
-
-// ADD ITEMS
+/*
 function showAddDialog() {
     id('itemChoice').disabled=(depth<1)?true:false;
     id('listChoice').checked=true;
     showDialog('addDialog',true);
 }
-
+*/
+// ADD ITEMS
 id('buttonNew').addEventListener('click', function(){
+	item={};
+	id('noteField').value='';
+    id('deleteNoteButton').style.display='none';
+    id('noteAddButton').style.display='block';
+    id('noteSaveButton').style.display='none';
     if(depth<2 && list.type>0) { // list above depth 2 - can add sub-list
         showDialog('addDialog',true);
     }
     else {
+    	/* MOVED ABOVE
         item=null;
         id('noteField').value='';
         id('deleteNoteButton').style.display='none';
         id('noteAddButton').style.display='block';
         id('noteSaveButton').style.display='none';
+        */
         showDialog('noteDialog',true);
     }
 })
@@ -110,8 +117,12 @@ id('addListButton').addEventListener('click',function() {
 })
 
 id('addNoteButton').addEventListener('click',function() {
+	/* MOVED ABOVE
 	id('noteField').value='';
     id('deleteNoteButton').style.display='none';
+    id('noteAddButton').style.display='block';
+    id('noteSaveButton').style.display='none
+    */
     showDialog('noteDialog',true);
 })
 
@@ -209,40 +220,34 @@ id('noteAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
-	// console.log('item.id: '+item.id+' itemIndex: '+itemIndex);
-    if(item.id) { // editing existing note item
-        /* JUST PUT ITEM
-        var getRequest=dbObjectStore.get(item.id);
-        getRequest.onsuccess=function(event) {
-            var data=event.target.result;
-            data.text=item.text;
-            */
-            var putRequest=dbObjectStore.put(item);
-	        putRequest.onsuccess=function(event) {
-			    console.log('item '+item.index+" updated");
-		    };
-		    putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
-        
-
-        // getRequest.onerror=function(event) {console.log("error getting item to update "+item.index);}
-        // items[item.index].text=item.text;
-    }
-    else { // add new note
-        var addRequest=dbObjectStore.add(item);
-	    addRequest.onsuccess=function(event) {
-		    item.id=event.target.result;
-		    console.log("new item added - id is "+item.id);
-	    }
-	    addRequest.onerror=function(event) {console.log("error adding new item");};
-    }
-    showDialog('noteDialog',false);
-    itemIndex=null;
-    currentListItem=null;
-    loadListItems();
+    var addRequest=dbObjectStore.add(item);
+	addRequest.onsuccess=function(event) {
+		item.id=event.target.result;
+		console.log("new item added - id is "+item.id);
+		showDialog('noteDialog',false);
+    	itemIndex=null;
+    	currentListItem=null;
+    	loadListItems();
+	}
+	addRequest.onerror=function(event) {console.log("error adding new item");};
+    
 })
 
 id('noteSaveButton').addEventListener('click', function() {
-	
+	item.text=cryptify(id('noteField').value,keyCode);
+    console.log("encrypted note: "+item.text);
+    var dbTransaction=db.transaction('items',"readwrite");
+	var dbObjectStore=dbTransaction.objectStore('items');
+	console.log("database ready");
+	var putRequest=dbObjectStore.put(item);
+	putRequest.onsuccess=function(event) {
+		console.log('item updated');
+		showDialog('noteDialog',false);
+    	itemIndex=null;
+    	currentListItem=null;
+    	loadListItems();
+	};
+	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
 })
 
 // POPULATE LIST
@@ -459,6 +464,18 @@ function cryptify(value,key) {
 // KEY CHECK
 
 function tapKey(n) {
+	if(n=='<') {
+		console.log('BACKSPACE');
+		var l=pin.length;
+		if(l>0) pin=pin.substr(0,l-1);
+		console.log('pin: '+pin);
+		id('pinField').innerHTML='';
+		while(l>1) {
+			id('pinField').innerHTML+='*';
+			l--;
+		}
+		return false;
+	}
 	pin+=n;
 	id('pinField').innerHTML+='*';
 	console.log('pin: '+pin);
