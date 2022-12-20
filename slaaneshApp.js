@@ -209,14 +209,15 @@ id('deleteNoteButton').addEventListener('click', function() {
     currentListItem=null;
 })
 
-id('noteAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
-    if(item===null) {
-        item={};
-        item.owner=list.id;
-        item.type=list.type-1;
-    }
+id('noteAddButton').addEventListener('click', function() {
+    // if(item===null) {
+    item={};
+    item.owner=list.id;
+    item.type=list.type-1;
+    // }
     item.text=cryptify(id('noteField').value,keyCode);
-    console.log("encrypted note: "+item.text);
+    // console.log("encrypted note: "+item.text);
+    console.log('ADD new item (owner: '+item.owner+') to list '+list.id+': '+list.name);
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");

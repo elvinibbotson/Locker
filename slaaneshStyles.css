@@ -148,7 +148,6 @@ li {
 }
 
 #main {
-    margin-top: 24px;
     width: 100%;
     position: relative;
   padding-top: 10px;
@@ -163,7 +162,7 @@ li {
 }
   
 #list {
-    margins: 24px,10px,24px,10px;
+    margin-top: 30px;
     list-style: none;
     display: flex;
     flex-direction: column;
