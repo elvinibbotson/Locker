@@ -61,6 +61,12 @@ id('heading').addEventListener('click',function() {
 	else showDialog('dataDialog',true);
 });
 
+// DISPLAY MESSAGE
+function display(message) {
+	id('message').innerText=message;
+	showDialog('messageDialog',true);
+}
+
 // SHOW/HIDE DIALOG
 function showDialog(dialog,show) {
     console.log('show '+dialog+': '+show);
@@ -164,7 +170,7 @@ id('listSaveButton').addEventListener('click', function() {
 
 id('deleteListButton').addEventListener('click',function() {
 	if(items.length>0) {
-		alert('CAN ONLY DELETE EMPTY LISTS');
+		display('CAN ONLY DELETE EMPTY LISTS');
 		return;
 	}
 	var dbTransaction=db.transaction('items',"readwrite");
@@ -393,7 +399,7 @@ id("fileChooser").addEventListener('change', function() {
 			request.onerror=function(e) {console.log("error adding item");};
 		}
 		showDialog('importDialog',false);
-		alert("data imported - restart");
+		display("data imported - restart");
   	});
   	fileReader.readAsText(file);
 });
@@ -440,7 +446,7 @@ function backup() {
    			a.download=fileName;
     		document.body.appendChild(a);
     		a.click();
-			alert(fileName+" saved to downloads folder");
+			display(fileName+" saved to downloads folder");
 			var today=new Date();
 			lastSave=today.getMonth();
 			window.localStorage.setItem('lastSave',lastSave); // remember month of backup
@@ -538,10 +544,13 @@ request.onsuccess=function (event) {
 	list.id=list.owner=null;
 };
 request.onupgradeneeded=function(event) {
-	var dbObjectStore=event.currentTarget.result.createObjectStore("items",{
-		keyPath:'id',autoIncrement: true
-	});
-	console.log("items database ready");
+	db=event.currentTarget.result;
+	if(!db.objectStoreNames.contains('items')) {
+		var dbObjectStore=db.createObjectStore("items",{ keyPath:"id",autoIncrement:true });
+		console.log("items store created");
+	}
+	else console.log("items store exists");
+	console.log("database ready");
 }
 request.onerror=function(event) {
 	alert("indexedDB error code "+event.target.errorCode);
