@@ -501,7 +501,7 @@ function tapKey(n) {
         	return;
     	}
     	else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
-    	alert('pin: '+pin+' step 2 done');
+    		alert('pin: '+pin+' step 2 done');
         	window.localStorage.keyCode=cryptify(pin,'secrets');
         	unlocked=true;
         	showDialog('keyDialog',false);
