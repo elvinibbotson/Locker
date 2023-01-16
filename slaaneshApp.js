@@ -526,7 +526,7 @@ if(!keyCode) { // first use - set a PIN
 alert('set new PIN');
     keyCode=null;
     id('keyTitle').innerText='set a PIN';
-    id(pinField).innerHTML='';
+    id('pinField').innerHTML='';
     alert('show keypad');
     showDialog('keyDialog',true);
 }
