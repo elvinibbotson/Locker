@@ -492,16 +492,20 @@ function tapKey(n) {
 		console.log("keyCode: "+keyCode);
 		console.log("check: "+id('keyCheck').value);
 		if(keyCode===null) { // set keyCode - step 1
+			alert('step 1 done');
 			keyCode=pin;
 			id('keyCheck').value=pin;
 			id('pinField').innerText='';
+			pin='';
 			id('keyTitle').innerText='confirm PIN';
         	return;
     	}
     	else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
+    	alert('pin: '+pin+' step 2 done');
         	window.localStorage.keyCode=cryptify(pin,'secrets');
         	unlocked=true;
         	showDialog('keyDialog',false);
+        	alert('load list');
         	loadListItems(); // WAS IN startup
         	return true;
     	}
