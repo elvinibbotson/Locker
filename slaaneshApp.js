@@ -521,7 +521,7 @@ function keyCheck() {
 // START-UP CODE
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
-console.log("last save: "+lastSave+"; saved key: "+keyCode);
+alert("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
     keyCode=null;
     id('keyTitle').innerHTML='set a PIN';
@@ -542,7 +542,7 @@ else { // start-up - enter PIN
 var request=window.indexedDB.open("slaaneshDB");
 request.onsuccess=function (event) {
 	db=event.target.result;
-	console.log("DB open");
+	alert("DB open");
 	list.id=list.owner=null;
 };
 request.onupgradeneeded=function(event) {
