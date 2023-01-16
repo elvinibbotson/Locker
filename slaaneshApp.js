@@ -530,7 +530,7 @@ alert('set new PIN');
     showDialog('keyDialog',true);
 }
 else { // start-up - enter PIN
-	console.log('encrypted keyCode: '+keyCode);
+	alert('encrypted keyCode: '+keyCode);
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
 	console.log("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='PIN';
