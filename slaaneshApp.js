@@ -74,10 +74,12 @@ function showDialog(dialog,show) {
     if(show) {
         id(dialog).style.display='block';
         currentDialog=dialog;
+        id('buttonNew').style.display='none';
     }
     else {
         id(dialog).style.display='none';
         currentDialog=null;
+        id('buttonNew').style.display='block';
     }
 }
 /*
