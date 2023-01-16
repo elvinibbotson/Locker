@@ -523,11 +523,12 @@ lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
 alert("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
-alert('set new PIN');
+	alert('set new PIN');
     keyCode=null;
     id('keyTitle').innerText='set a PIN';
     id('pinField').innerText='';
-    alert('show keypad');
+    pin='';
+    alert('PIN: '+pin+' - show keypad');
     showDialog('keyDialog',true);
 }
 else { // start-up - enter PIN
