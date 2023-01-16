@@ -525,8 +525,9 @@ alert("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
 alert('set new PIN');
     keyCode=null;
-    id('keyTitle').innerHTML='set a PIN';
+    id('keyTitle').innerText='set a PIN';
     id(pinField).innerHTML='';
+    alert('show keypad');
     showDialog('keyDialog',true);
 }
 else { // start-up - enter PIN
