@@ -493,7 +493,7 @@ function tapKey(n) {
 		console.log("check: "+id('keyCheck').value);
 		if(keyCode===null) { // set keyCode - step 1
 			keyCode=pin;
-			pin='';
+			id('keyCheck').value=pin;
 			id('pinField').innerText='';
 			id('keyTitle').innerText='confirm PIN';
         	return;
@@ -511,7 +511,7 @@ function tapKey(n) {
     	return false;
 	}
 } 
-
+/*
 function keyCheck() {
     console.log('KEY CHECK');
     if(unlocked) return true;
@@ -519,7 +519,7 @@ function keyCheck() {
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
 }
-
+*/
 // START-UP CODE
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
