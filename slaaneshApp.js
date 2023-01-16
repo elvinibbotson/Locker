@@ -526,7 +526,7 @@ if(!keyCode) { // first use - set a PIN
 alert('set new PIN');
     keyCode=null;
     id('keyTitle').innerText='set a PIN';
-    id('pinField').innerHTML='';
+    id('pinField').innerText='';
     alert('show keypad');
     showDialog('keyDialog',true);
 }
@@ -535,7 +535,7 @@ else { // start-up - enter PIN
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
 	alert("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='PIN';
-	id('pinField').innerHTML='';
+	id('pinField').innerText='';
 	pin='';
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
