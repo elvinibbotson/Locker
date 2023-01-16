@@ -532,7 +532,7 @@ alert('set new PIN');
 else { // start-up - enter PIN
 	alert('encrypted keyCode: '+keyCode);
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
-	console.log("decoded keyCode: "+keyCode);
+	alert("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='PIN';
 	id('pinField').innerHTML='';
 	pin='';
