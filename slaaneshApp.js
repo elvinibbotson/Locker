@@ -471,7 +471,6 @@ function cryptify(value,key) {
 };
 
 // KEY CHECK
-
 function tapKey(n) {
 	if(n=='<') {
 		console.log('BACKSPACE');
@@ -492,7 +491,6 @@ function tapKey(n) {
 		console.log("keyCode: "+keyCode);
 		console.log("check: "+id('keyCheck').value);
 		if(keyCode===null) { // set keyCode - step 1
-			alert('step 1 done');
 			keyCode=pin;
 			id('keyCheck').value=pin;
 			id('pinField').innerText='';
@@ -501,11 +499,9 @@ function tapKey(n) {
         	return;
     	}
     	else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
-    		alert('pin: '+pin+' step 2 done');
         	window.localStorage.keyCode=cryptify(pin,'secrets');
         	unlocked=true;
         	showDialog('keyDialog',false);
-        	alert('load list');
         	loadListItems(); // WAS IN startup
         	return true;
     	}
@@ -527,20 +523,19 @@ function keyCheck() {
 // START-UP CODE
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
-alert("last save: "+lastSave+"; saved key: "+keyCode);
+console.log("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
-	alert('set new PIN');
+	console.log('set new PIN');
     keyCode=null;
     id('keyTitle').innerText='set a PIN';
     id('pinField').innerText='';
     pin='';
-    alert('PIN: '+pin+' - show keypad');
     showDialog('keyDialog',true);
 }
 else { // start-up - enter PIN
-	alert('encrypted keyCode: '+keyCode);
+	console.log('encrypted keyCode: '+keyCode);
 	keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
-	alert("decoded keyCode: "+keyCode);
+	console.log("decoded keyCode: "+keyCode);
 	id('keyTitle').innerText='PIN';
 	id('pinField').innerText='';
 	pin='';
@@ -551,7 +546,7 @@ else { // start-up - enter PIN
 var request=window.indexedDB.open("slaaneshDB");
 request.onsuccess=function (event) {
 	db=event.target.result;
-	alert("DB open");
+	console.log("DB open");
 	list.id=list.owner=null;
 };
 request.onupgradeneeded=function(event) {
