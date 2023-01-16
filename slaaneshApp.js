@@ -493,20 +493,22 @@ function tapKey(n) {
 		console.log("check: "+id('keyCheck').value);
 		if(keyCode===null) { // set keyCode - step 1
 			keyCode=pin;
-			id('keyTitle').innerHTML='confirm key';
+			pin='';
+			id('pinField').innerText='';
+			id('keyTitle').innerText='confirm PIN';
         	return;
     	}
-    else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
-        window.localStorage.keyCode=cryptify(pin,'secrets');
-        unlocked=true;
-        showDialog('keyDialog',false);
-        loadListItems(); // WAS IN startup
-        return true;
-    }
-    else keyCode=null;
-    showDialog('keyDialog',false);
-    console.log("key is "+keyCode);
-    return false;
+    	else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
+        	window.localStorage.keyCode=cryptify(pin,'secrets');
+        	unlocked=true;
+        	showDialog('keyDialog',false);
+        	loadListItems(); // WAS IN startup
+        	return true;
+    	}
+    	else keyCode=null;
+    	showDialog('keyDialog',false);
+    	console.log("key is "+keyCode);
+    	return false;
 	}
 } 
 
