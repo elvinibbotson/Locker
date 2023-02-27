@@ -82,13 +82,7 @@ function showDialog(dialog,show) {
         id('buttonNew').style.display='block';
     }
 }
-/*
-function showAddDialog() {
-    id('itemChoice').disabled=(depth<1)?true:false;
-    id('listChoice').checked=true;
-    showDialog('addDialog',true);
-}
-*/
+
 // ADD ITEMS
 id('buttonNew').addEventListener('click', function(){
 	item={};
@@ -121,15 +115,10 @@ id('addNoteButton').addEventListener('click',function() {
 })
 
 // LIST
-/*
-id('cancelListButton').addEventListener('click',function() {
-    showDialog('editItemDialog',false);
-})
-*/
 id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
     item={};
     item.owner=list.id; // NEW
-    item.type=1; // NEW -- WAS 0!!
+    // NO LONGER USE type -USE DEPTH INSTEAD item.type=1;
     item.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+item.text);
     var dbTransaction=db.transaction('items',"readwrite");
@@ -143,7 +132,6 @@ id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND
 	}
 	 addRequest.onerror=function(event) {cosnole.log('error adding new list');}
 })
-
 id('listSaveButton').addEventListener('click', function() {
 	list.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+list.text);
@@ -157,7 +145,6 @@ id('listSaveButton').addEventListener('click', function() {
 	};
 	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
 })
-
 id('deleteListButton').addEventListener('click',function() {
 	if(items.length>0) {
 		display('CAN ONLY DELETE EMPTY LISTS');
@@ -182,11 +169,6 @@ id('deleteListButton').addEventListener('click',function() {
 })
 
 // NOTE
-/*
-id('cancelNoteButton').addEventListener('click',function() {
-    showDialog('noteDialog',false);
-})
-*/
 id('deleteNoteButton').addEventListener('click', function() {
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
@@ -206,11 +188,9 @@ id('deleteNoteButton').addEventListener('click', function() {
 })
 
 id('noteAddButton').addEventListener('click', function() {
-    // if(item===null) {
     item={};
     item.owner=list.id;
-    item.type=list.type-1;
-    // }
+    // item.type=list.type-1;
     item.text=cryptify(id('noteField').value,keyCode);
     // console.log("encrypted note: "+item.text);
     console.log('ADD new item (owner: '+item.owner+') to list '+list.id+': '+list.name);
@@ -276,12 +256,13 @@ function populateList(decrypt) {
 		listItem=document.createElement('li');
 		listItem.index=i;
 	 	listItem.innerText=items[i].text;
-		if(items[i].type>0) { // tap on list to open it
+		// NO LONGER USE type USE DEPTH INSTEAD if(items[i].type>0) { // tap on list to open it
+		if(depth<1) { // tap on list to open it
 		    listItem.addEventListener('click',function() {
 	 	    	itemIndex=this.index;
 	 	    	console.log('open item '+itemIndex);
 		    	list.id=items[this.index].id;
-		    	list.type=items[this.index].type;
+		    	// list.type=items[this.index].type;
 		    	list.name=items[this.index].text;
 		    	list.owner=items[this.index].owner;
 		    	console.log('open list '+list.name+' id:'+list.id+' type:'+list.type+' owner: '+list.owner);
@@ -300,7 +281,7 @@ function populateList(decrypt) {
 				id('deleteNoteButton').style.display='block';
 				id('noteAddButton').style.display='none';
 				id('noteSaveButton').style.display='block';
-				console.log('should say '+item.text+'; says '+id('noteField').value);
+				console.log('should say '+item.text+'; says '+id(' ').value);
 				showDialog('noteDialog',true);
 			})
 		}
@@ -322,13 +303,13 @@ function loadListItems() {
 			item=event.target.result;
 			console.log("list item "+item.text+"; type: "+item.type+"; owner: "+item.owner);
 			list.name=cryptify(item.text,keyCode);
-			list.type=item.type; // types 1-3 only
+			// NO LONGER USE type list.type=item.type; // types 1-3 only
 		};
 		request.onerror=function() {console.log("error retrieving item "+list.id);}
 	}
 	else {
 	    list.name="Slaanesh";
-	    list.type=1;
+	    // NO LONGER USE type list.type=1;
 	}
 	items=[];
 	request=dbObjectStore.openCursor();
