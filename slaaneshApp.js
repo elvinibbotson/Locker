@@ -107,12 +107,7 @@ id('buttonNew').addEventListener('click', function(){
         showDialog('noteDialog',true);
     }
 })
-/*
-id('cancelAddButton').addEventListener('click',function() {
-    // id('addDialog').style.display='none';
-    showDialog('addDialog',false);
-})
-*/
+
 id('addListButton').addEventListener('click',function() {
 	id('listField').value='';
     id('deleteListButton').style.display='none';
@@ -122,12 +117,6 @@ id('addListButton').addEventListener('click',function() {
 })
 
 id('addNoteButton').addEventListener('click',function() {
-	/* MOVED ABOVE
-	id('noteField').value='';
-    id('deleteNoteButton').style.display='none';
-    id('noteAddButton').style.display='block';
-    id('noteSaveButton').style.display='none
-    */
     showDialog('noteDialog',true);
 })
 
@@ -307,11 +296,11 @@ function populateList(decrypt) {
 				itemIndex=this.index;
 				item=items[this.index];
 				console.log('edit note '+i+': '+item.text);
-				id('noteField').innerText=item.text;
+				id('noteField').value=item.text;
 				id('deleteNoteButton').style.display='block';
 				id('noteAddButton').style.display='none';
 				id('noteSaveButton').style.display='block';
-				console.log('should say '+item.text+'; says '+id('noteField').innerText);
+				console.log('should say '+item.text+'; says '+id('noteField').value);
 				showDialog('noteDialog',true);
 			})
 		}
