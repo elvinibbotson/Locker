@@ -35,7 +35,7 @@ id('main').addEventListener('touchend', function(event) {
         console.log('path: '+path);
         list.id=list.owner;
         path.pop();
-        depth--;
+        depth=0;
         if(depth<1) list.id=list.owner=null;
         console.log('list.id: '+list.id+' path: '+path+' depth: '+depth);
         loadListItems();
