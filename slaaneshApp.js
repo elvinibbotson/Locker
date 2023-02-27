@@ -281,7 +281,7 @@ function populateList(decrypt) {
 				id('deleteNoteButton').style.display='block';
 				id('noteAddButton').style.display='none';
 				id('noteSaveButton').style.display='block';
-				console.log('should say '+item.text+'; says '+id(' ').value);
+				// console.log('should say '+item.text+'; says '+id('noteField').value);
 				showDialog('noteDialog',true);
 			})
 		}
