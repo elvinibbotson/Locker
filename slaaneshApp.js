@@ -96,7 +96,7 @@ id('buttonNew').addEventListener('click', function(){
     id('deleteNoteButton').style.display='none';
     id('noteAddButton').style.display='block';
     id('noteSaveButton').style.display='none';
-    if(depth<2 && list.type>0) { // list above depth 2 - can add sub-list
+    if(depth<1) { // top level - can add list
         showDialog('addDialog',true);
     }
     else {
@@ -143,7 +143,7 @@ id('cancelListButton').addEventListener('click',function() {
 id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
     item={};
     item.owner=list.id; // NEW
-    item.type=0; // NEW
+    item.type=1; // NEW -- WAS 0!!
     item.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+item.text);
     var dbTransaction=db.transaction('items',"readwrite");
@@ -159,12 +159,14 @@ id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND
 })
 
 id('listSaveButton').addEventListener('click', function() {
-	item.text=cryptify(id('listField').value,keyCode);
-    console.log('encrypt to '+item.text);
-    var putRequest=dbObjectStore.put(data);
+	list.text=cryptify(id('listField').value,keyCode);
+    console.log('encrypt to '+list.text);
+    var dbTransaction=db.transaction('items',"readwrite");
+	var dbObjectStore=dbTransaction.objectStore('items');
+    var putRequest=dbObjectStore.put(list); // WAS var putRequest=dbObjectStore.put(data);
 	putRequest.onsuccess=function(event) {
-		console.log('item '+item.index+" updated");
-		showDialog('editItemDialog',false);
+		console.log('item '+list.index+" updated");
+		showDialog('listDialog',false);
         loadListItems();
 	};
 	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
