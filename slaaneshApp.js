@@ -92,21 +92,18 @@ function showAddDialog() {
 // ADD ITEMS
 id('buttonNew').addEventListener('click', function(){
 	item={};
-	id('noteField').value='';
-    id('deleteNoteButton').style.display='none';
-    id('noteAddButton').style.display='block';
-    id('noteSaveButton').style.display='none';
-    if(depth<1) { // top level - can add list
-        showDialog('addDialog',true);
+    if(depth<1) { // top level - can only add lists
+    	id('listField').value='';
+    	id('deleteListButton').style.display='none';
+    	id('listAddButton').style.display='block';
+    	id('listSaveButton').style.display='none';
+        showDialog('listDialog',true);
     }
-    else {
-    	/* MOVED ABOVE
-        item=null;
-        id('noteField').value='';
-        id('deleteNoteButton').style.display='none';
-        id('noteAddButton').style.display='block';
-        id('noteSaveButton').style.display='none';
-        */
+    else { // lower level: can only add notes
+    	id('noteField').value='';
+    	id('deleteNoteButton').style.display='none';
+    	id('noteAddButton').style.display='block';
+    	id('noteSaveButton').style.display='none';
         showDialog('noteDialog',true);
     }
 })
@@ -324,7 +321,6 @@ function populateList(decrypt) {
 
 // LOAD LIST ITEMS
 function loadListItems() {
-	//  load children of list.id
 	console.log("load children of list.id "+list.id+" - depth: "+depth+' owner: '+list.owner);
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
@@ -351,7 +347,7 @@ function loadListItems() {
 		var cursor=event.target.result;
 		if(cursor) {
 			if(cursor.value.owner==list.id) { // just items in this list
-				if(cursor.value.type>3) cursor.value.type-=4;
+				// NO LONGER NEEDED? if(cursor.value.type>3) cursor.value.type-=4;
 				items.push(cursor.value);
 				console.log("item id: "+cursor.value.id+"; index: "+cursor.value.index+"; "+cursor.value.text+"; type: "+cursor.value.type+"; owner: "+cursor.value.owner);
 			}
