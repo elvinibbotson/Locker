@@ -11,7 +11,7 @@ var list={};
 var currentListItem=null;
 var currentDialog=null;
 var depth=0;
-var path=[];
+// var path=[];
 var lastSave=null;
 var pin='';
 var keyCode=null;
@@ -32,12 +32,12 @@ id('main').addEventListener('touchend', function(event) {
     drag.y=dragStart.y-event.changedTouches[0].clientY;
     if(Math.abs(drag.y)>50) return; // ignore vertical drags
     if((drag.x<-50)&&(depth>0)) { // drag right to decrease depth...
-        console.log('path: '+path);
+        // console.log('path: '+path);
         list.id=list.owner;
-        path.pop();
+        // path.pop();
         depth=0;
         if(depth<1) list.id=list.owner=null;
-        console.log('list.id: '+list.id+' path: '+path+' depth: '+depth);
+        console.log('list.id: '+list.id+' depth: '+depth);
         loadListItems();
     }
     else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
@@ -158,7 +158,11 @@ id('deleteListButton').addEventListener('click',function() {
 	delRequest.onsuccess=function() {
 	    console.log('deleted from database');
 	    showDialog('listDialog',false);
-	    depth--;
+        depth=0;
+        list.id=list.owner=null;
+        console.log('list.id: '+list.id+' depth: '+depth);
+        loadListItems();
+	    
 	}
 	delRequest.onerror=function(event) {console.log('delete failed')};
     items.splice(itemIndex,1);
@@ -231,9 +235,10 @@ id('noteSaveButton').addEventListener('click', function() {
 function populateList(decrypt) {
     var listItem;
     id("list").innerHTML=""; // clear list
-	console.log("populate list for path "+path+" with "+items.length + " items - depth: "+depth);
-	if(path.length<1)
+	console.log("populate list with "+items.length + " items - depth: "+depth);
+	// if(path.length<1)
     id('heading').innerHTML=(depth<1)?'Slaanesh':list.name;
+	/*
 	else {
 	    id('heading').innerHTML=path[0];
 	    var i=1;
@@ -241,6 +246,7 @@ function populateList(decrypt) {
 	        id('heading').innerHTML+='.'+path[i++];
 	    }
 	}
+	*/
 	if(decrypt) for(i in items) {
 		items[i].text=cryptify(items[i].text,keyCode);
 		console.log('item '+i+': '+items[i].text);
@@ -251,7 +257,7 @@ function populateList(decrypt) {
 		return 0;
 	}); // sort alphabetically
 	for(var i in items) {
-	    console.log('add item '+i+': '+items[i].text+' type '+items[i].type);
+	    console.log('add item '+i+': '+items[i].text);
 	    // all items have text
 		listItem=document.createElement('li');
 		listItem.index=i;
@@ -265,9 +271,9 @@ function populateList(decrypt) {
 		    	// list.type=items[this.index].type;
 		    	list.name=items[this.index].text;
 		    	list.owner=items[this.index].owner;
-		    	console.log('open list '+list.name+' id:'+list.id+' type:'+list.type+' owner: '+list.owner);
+		    	console.log('open list '+list.name+' id:'+list.id+' owner: '+list.owner);
 		    	depth++;
-		    	path.push(list.name);
+		    	// path.push(list.name);
 		    	loadListItems();
 	 		});
 		    listItem.style.fontWeight='bold'; // lists are bold
@@ -301,7 +307,7 @@ function loadListItems() {
 		var request=dbObjectStore.get(list.id);
 		request.onsuccess=function() {
 			item=event.target.result;
-			console.log("list item "+item.text+"; type: "+item.type+"; owner: "+item.owner);
+			console.log("list item "+item.text+"; owner: "+item.owner);
 			list.name=cryptify(item.text,keyCode);
 			// NO LONGER USE type list.type=item.type; // types 1-3 only
 		};
@@ -319,7 +325,7 @@ function loadListItems() {
 			if(cursor.value.owner==list.id) { // just items in this list
 				// NO LONGER NEEDED? if(cursor.value.type>3) cursor.value.type-=4;
 				items.push(cursor.value);
-				console.log("item id: "+cursor.value.id+"; index: "+cursor.value.index+"; "+cursor.value.text+"; type: "+cursor.value.type+"; owner: "+cursor.value.owner);
+				console.log("item id: "+cursor.value.id+"; index: "+cursor.value.index+"; "+cursor.value.text+"; owner: "+cursor.value.owner);
 			}
 			cursor.continue ();
 		}
