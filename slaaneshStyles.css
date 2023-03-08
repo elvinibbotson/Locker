@@ -60,7 +60,7 @@ li {
 
 .dialog {
   background: dimgray;
-  position: absolute;
+  position: fixed;
   top: 0;
   padding: 5px;
   width: 100%;
