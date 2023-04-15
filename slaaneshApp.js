@@ -480,12 +480,18 @@ function tapKey(n) {
         	loadListItems(); // WAS IN startup
         	return true;
     	}
+    	else {
+    		id('pinField').innerText='';
+			pin='';
+    	}
+    	/*
     	else keyCode=null;
     	showDialog('keyDialog',false);
     	console.log("key is "+keyCode);
     	return false;
+    	*/
 	}
-} 
+}  
 /*
 function keyCheck() {
     console.log('KEY CHECK');
