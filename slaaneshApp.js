@@ -392,7 +392,9 @@ function backup() {
 	var fileName="secrets";
 	var date=new Date();
 	fileName+=date.getFullYear();
+	if(date.getMonth()<9) fileName+='0'; // date format YYYYMMDD
 	fileName+=(date.getMonth()+1);
+	if(date.getDate()<10) fileName+='0';
 	fileName+=date.getDate()+".json";
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
