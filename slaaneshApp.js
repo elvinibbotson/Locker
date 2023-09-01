@@ -506,7 +506,7 @@ function keyCheck() {
 // START-UP CODE
 lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
-console.log("last save: "+lastSave+"; saved key: "+keyCode);
+alert("last save: "+lastSave+"; saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
 	console.log('set new PIN');
     keyCode=null;
