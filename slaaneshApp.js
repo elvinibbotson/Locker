@@ -389,11 +389,11 @@ id('cancelImportButton').addEventListener('click', function() {
 // BACKUP
 function backup() {
   	console.log("EXPORT");
-	var fileName="secrets";
+	var fileName="Slaanesh-";
 	var date=new Date();
-	fileName+=date.getFullYear();
+	fileName+=date.getFullYear()+'-';
 	if(date.getMonth()<9) fileName+='0'; // date format YYYYMMDD
-	fileName+=(date.getMonth()+1);
+	fileName+=(date.getMonth()+1)+'-';
 	if(date.getDate()<10) fileName+='0';
 	fileName+=date.getDate()+".json";
 	var dbTransaction=db.transaction('items',"readwrite");
