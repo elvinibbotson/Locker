@@ -3,11 +3,11 @@ html, body {
   margin: 0;
   height: 100%;
   width: 100%;
-  font-family: 'Helvetica', 'Verdana', sans-serif;
+  font-family: 'Courier',monospace;
   font-weight: 400;
   font-display: optional;
   color: white;
-  background-color: #333;
+  background-color: dimgray;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
@@ -146,14 +146,15 @@ li {
     width:100%;
     height: 20px;
     padding: 10px;
-    background-color: dimgray;
+    background-color: black;
     z-index: 10;
 }
 
 #heading {
   color: white;
+  font-family: 'Courier',monospace;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.5em;
 }
 
 #main {
@@ -167,7 +168,7 @@ li {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background-color: #333;
+  background-color: dimgray;
 }
   
 #list {
@@ -177,7 +178,7 @@ li {
     flex-direction: column;
     transition: opacity 0.2s ease-in-out;
     padding: 0 0.5em;
-    background-color: #333;
+    background-color: dimgray;
 }
 
 #keypad {
