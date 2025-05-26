@@ -3,29 +3,26 @@ function id(el) {
 }
 'use strict';
 // GLOBAL VARIABLES	
-var db=null;
+// var db=null;
 var items=[];
 var item=null;
 var itemIndex=0;
-var list={};
+var listItems=[];
+var category=null;
 var currentListItem=null;
 var currentDialog=null;
 var depth=0;
-// var path=[];
 var lastSave=null;
 var pin='';
 var keyCode=null;
 var unlocked=false;
-var months="JanFebMarAprMayJunJulAugSepOctNovDec";
 var dragStart={};
-
 // DRAG TO CHANGE DEPTH
 id('main').addEventListener('touchstart', function(event) {
     // console.log(event.changedTouches.length+" touches");
     dragStart.x=event.changedTouches[0].clientX;
     dragStart.y=event.changedTouches[0].clientY;
 })
-
 id('main').addEventListener('touchend', function(event) {
     var drag={};
     drag.x=dragStart.x-event.changedTouches[0].clientX;
@@ -33,16 +30,16 @@ id('main').addEventListener('touchend', function(event) {
     if(Math.abs(drag.y)>50) return; // ignore vertical drags
     if((drag.x<-50)&&(depth>0)) { // drag right to decrease depth...
         // console.log('path: '+path);
-        list.id=list.owner;
+        // list.id=list.owner;
         // path.pop();
+        category=null;
         depth=0;
-        if(depth<1) list.id=list.owner=null;
-        console.log('list.id: '+list.id+' depth: '+depth);
+        // if(depth<1) list.id=list.owner=null;
+        // console.log('list.id: '+list.id+' depth: '+depth);
         loadListItems();
     }
     else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
 })
-
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
 	if(depth>0) { // list heading - show item edit dialog
@@ -60,13 +57,11 @@ id('heading').addEventListener('click',function() {
 	}
 	else showDialog('dataDialog',true);
 });
-
 // DISPLAY MESSAGE
 function display(message) {
 	id('message').innerText=message;
 	showDialog('messageDialog',true);
 }
-
 // SHOW/HIDE DIALOG
 function showDialog(dialog,show) {
     console.log('show '+dialog+': '+show);
@@ -82,7 +77,6 @@ function showDialog(dialog,show) {
         id('buttonNew').style.display='block';
     }
 }
-
 // ADD ITEMS
 id('buttonNew').addEventListener('click', function(){
 	item={};
@@ -101,7 +95,6 @@ id('buttonNew').addEventListener('click', function(){
         showDialog('noteDialog',true);
     }
 })
-
 id('addListButton').addEventListener('click',function() {
 	id('listField').value='';
     id('deleteListButton').style.display='none';
@@ -109,11 +102,9 @@ id('addListButton').addEventListener('click',function() {
 	id('listSaveButton').style.display='none';
     showDialog('listDialog',true);
 })
-
 id('addNoteButton').addEventListener('click',function() {
     showDialog('noteDialog',true);
 })
-
 // LIST
 id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
     item={};
@@ -171,7 +162,6 @@ id('deleteListButton').addEventListener('click',function() {
     itemIndex=null;
     currentListItem=null;
 })
-
 // NOTE
 id('deleteNoteButton').addEventListener('click', function() {
 	var dbTransaction=db.transaction('items',"readwrite");
@@ -190,7 +180,6 @@ id('deleteNoteButton').addEventListener('click', function() {
     itemIndex=null;
     currentListItem=null;
 })
-
 id('noteAddButton').addEventListener('click', function() {
     item={};
     item.owner=list.id;
@@ -213,7 +202,6 @@ id('noteAddButton').addEventListener('click', function() {
 	addRequest.onerror=function(event) {console.log("error adding new item");};
     
 })
-
 id('noteSaveButton').addEventListener('click', function() {
 	item.text=cryptify(id('noteField').value,keyCode);
     console.log("encrypted note: "+item.text);
@@ -230,50 +218,30 @@ id('noteSaveButton').addEventListener('click', function() {
 	};
 	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
 })
-
 // POPULATE LIST
 function populateList(decrypt) {
     var listItem;
+    console.log('first listItem is '+listItems[0].text);
     id("list").innerHTML=""; // clear list
-	console.log("populate list with "+items.length + " items - depth: "+depth);
-	// if(path.length<1)
-    id('heading').innerHTML=(depth<1)?'Locker':list.name;
-	/*
-	else {
-	    id('heading').innerHTML=path[0];
-	    var i=1;
-	    while(i<path.length) {
-	        id('heading').innerHTML+='.'+path[i++];
-	    }
-	}
-	*/
-	if(decrypt) for(i in items) {
-		items[i].text=cryptify(items[i].text,keyCode);
-		console.log('item '+i+': '+items[i].text);
-	}
-	items.sort(function(a,b){
+	console.log("populate list with "+listItems.length + " items - depth: "+depth);
+	listItems.sort(function(a,b){ // sort alphabetically
 		if(a.text.toUpperCase()<b.text.toUpperCase()) return -1;
 		if(a.text.toUpperCase()>b.text.toUpperCase()) return 1;
 		return 0;
-	}); // sort alphabetically
-	for(var i in items) {
-	    console.log('add item '+i+': '+items[i].text);
+	});
+	for(var i in listItems) {
+	    console.log('add item '+i+': '+listItems[i].text);
 	    // all items have text
 		listItem=document.createElement('li');
 		listItem.index=i;
-	 	listItem.innerText=items[i].text;
-		// NO LONGER USE type USE DEPTH INSTEAD if(items[i].type>0) { // tap on list to open it
-		if(depth<1) { // tap on list to open it
+	 	listItem.innerText=listItems[i].text;
+		if(depth<1) { // tap on category to open it
 		    listItem.addEventListener('click',function() {
 	 	    	itemIndex=this.index;
 	 	    	console.log('open item '+itemIndex);
-		    	list.id=items[this.index].id;
-		    	// list.type=items[this.index].type;
-		    	list.name=items[this.index].text;
-		    	list.owner=items[this.index].owner;
-		    	console.log('open list '+list.name+' id:'+list.id+' owner: '+list.owner);
+		    	category=listItems[this.index].code;
+		    	console.log('open list '+listItems[this.index].text);
 		    	depth++;
-		    	// path.push(list.name);
 		    	loadListItems();
 	 		});
 		    listItem.style.fontWeight='bold'; // lists are bold
@@ -281,7 +249,7 @@ function populateList(decrypt) {
 		else { // tap on note to edit it
 			listItem.addEventListener('click',function() {
 				itemIndex=this.index;
-				item=items[this.index];
+				item=listItems[this.index];
 				console.log('edit note '+i+': '+item.text);
 				id('noteField').value=item.text;
 				id('deleteNoteButton').style.display='block';
@@ -294,10 +262,33 @@ function populateList(decrypt) {
 		id('list').appendChild(listItem);
 	}
 }
-
 // LOAD LIST ITEMS
 function loadListItems() {
-	console.log("load children of list.id "+list.id+" - depth: "+depth+' owner: '+list.owner);
+	console.log("load notes for category "+category+" - depth: "+depth);
+	// NEW CODE...
+	if(category==null) {
+		depth=0;
+		id('heading').innerHTML='Locker';
+	}
+	else {
+		depth=1;
+		id('heading').innerHTML=cryptify(category,keyCode);
+	}
+	listItems=[];
+	for(var i=0;i<items.length;i++) {
+		if(items[i].category==category) {
+			item={};
+			item.code=items[i].text; // encrypted
+			item.text=cryptify(items[i].text,keyCode);
+			listItems.push(item);
+		}
+	}
+	if(listItems.length<1) { // no data: restore backup?
+		console.log("no data - restore backup?");
+		showDialog('importDialog',true);
+	}
+	populateList(true);
+	/* OLD CODE...
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
@@ -346,13 +337,11 @@ function loadListItems() {
 			populateList(true);
 		}
 	}
+	*/
 }
-
 // DATA
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
 id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
-/* id('dataCancelButton').addEventListener('click',function() {showDialog('dataDialog',false)}); */
-
 // RESTORE BACKUP
 id("fileChooser").addEventListener('change', function() {
 	var file=id('fileChooser').files[0];
@@ -365,37 +354,60 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("json: "+json);
 		var items=json.items;
 		console.log(items.length+" items loaded");
-		var dbTransaction=db.transaction('items',"readwrite");
-		var dbObjectStore=dbTransaction.objectStore('items');
+		// CREATE NEW DATABASE
+		var categories=[];
 		for(var i=0;i<items.length;i++) {
-			console.log("save "+items[i].text);
-			var request=dbObjectStore.add(items[i]);
-			request.onsuccess=function(e) {
-				console.log(items.length+" items added to database");
-			};
-			request.onerror=function(e) {console.log("error adding item");};
+			var item={};
+			if(items[i].owner===null) { // category
+				var category={};
+				category.id=items[i].id;
+				category.text=items[i].text;
+				categories.push(category);
+				item.category=null;
+				console.log('item '+i+' is a category item');
+			}
+			else { // note
+				var found=false;
+				var j=0;
+				while(j<categories.length && !found) {
+					if(categories[j].id==items[i].owner) {
+						found=true;
+						item.category=categories[j].text;
+						console.log('item '+i+' is a note item in category '+item.category);
+					}
+					else j++;
+				}
+				if(!found) console.log('NO CATEGORY MATCH');
+			}
+			item.text=items[i].text;
+			items[i]=item;
 		}
+		//*/
+		var data=JSON.stringify(items);
+		window.localStorage.setItem('items',data);
 		showDialog('importDialog',false);
 		display("data imported - restart");
   	});
   	fileReader.readAsText(file);
 });
-
-/* CANCEL RESTORE
-id('cancelImportButton').addEventListener('click', function() {
-    showDialog('importDialog',false);
-});
-*/
 // BACKUP
 function backup() {
   	console.log("EXPORT");
-	var fileName="Locker-";
-	var date=new Date();
-	fileName+=date.getFullYear()+'-';
-	if(date.getMonth()<9) fileName+='0'; // date format YYYYMMDD
-	fileName+=(date.getMonth()+1)+'-';
-	if(date.getDate()<10) fileName+='0';
-	fileName+=date.getDate()+".json";
+	var fileName="LockerData.json";
+	console.log(items.length+" items - save");
+	var data={'items': items};
+	var json=JSON.stringify(data);
+	var blob=new Blob([json], {type:"data:application/json"});
+  	var a=document.createElement('a');
+	a.style.display='none';
+    var url=window.URL.createObjectURL(blob);
+	console.log("data ready to save: "+blob.size+" bytes");
+   	a.href=url;
+   	a.download=fileName;
+    document.body.appendChild(a);
+    a.click();
+	display(fileName+" saved to downloads folder");
+	/* OLD CODE...
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready");
@@ -431,8 +443,8 @@ function backup() {
 			window.localStorage.setItem('lastSave',lastSave); // remember month of backup
 		}
 	}
+	*/
 }
-
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
 	var i=0;
@@ -446,7 +458,6 @@ function cryptify(value,key) {
 	}
 	return result;
 };
-
 // KEY CHECK
 function tapKey(n) {
 	if(n=='<') {
@@ -479,34 +490,18 @@ function tapKey(n) {
         	window.localStorage.keyCode=cryptify(pin,'secrets');
         	unlocked=true;
         	showDialog('keyDialog',false);
-        	loadListItems(); // WAS IN startup
+        	loadListItems();
         	return true;
     	}
     	else {
     		id('pinField').innerText='';
 			pin='';
     	}
-    	/*
-    	else keyCode=null;
-    	showDialog('keyDialog',false);
-    	console.log("key is "+keyCode);
-    	return false;
-    	*/
 	}
 }  
-/*
-function keyCheck() {
-    console.log('KEY CHECK');
-    if(unlocked) return true;
-    id('keyTitle').innerText='enter key';
-    id('keyCheck').value=keyCode;
-    showDialog('keyDialog',true);
-}
-*/
 // START-UP CODE
-lastSave=window.localStorage.getItem('lastSave');
 keyCode=window.localStorage.keyCode; // load any saved key
-console.log("last save: "+lastSave+"; saved key: "+keyCode);
+console.log("saved key: "+keyCode);
 if(!keyCode) { // first use - set a PIN
 	console.log('set new PIN');
     keyCode=null;
@@ -525,7 +520,12 @@ else { // start-up - enter PIN
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
 }
-// load items from database
+var data=window.localStorage.getItem('items');
+items=JSON.parse(data);
+console.log(items.length+' items loaded');
+list.category=null;
+depth=0;
+/* load items from database
 var request=window.indexedDB.open("LockerDB");
 request.onsuccess=function (event) {
 	db=event.target.result;
@@ -544,7 +544,7 @@ request.onupgradeneeded=function(event) {
 request.onerror=function(event) {
 	alert("indexedDB error code "+event.target.errorCode);
 };
-	
+*/
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
 	console.log('Active service worker found, no need to register')
