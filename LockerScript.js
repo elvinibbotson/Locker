@@ -3,7 +3,6 @@ function id(el) {
 }
 'use strict';
 // GLOBAL VARIABLES	
-// var db=null;
 var items=[];
 var item=null;
 var itemIndex=0;
@@ -29,13 +28,8 @@ id('main').addEventListener('touchend', function(event) {
     drag.y=dragStart.y-event.changedTouches[0].clientY;
     if(Math.abs(drag.y)>50) return; // ignore vertical drags
     if((drag.x<-50)&&(depth>0)) { // drag right to decrease depth...
-        // console.log('path: '+path);
-        // list.id=list.owner;
-        // path.pop();
         category=null;
         depth=0;
-        // if(depth<1) list.id=list.owner=null;
-        // console.log('list.id: '+list.id+' depth: '+depth);
         loadListItems();
     }
     else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
@@ -183,7 +177,6 @@ id('deleteNoteButton').addEventListener('click', function() {
 id('noteAddButton').addEventListener('click', function() {
     item={};
     item.owner=list.id;
-    // item.type=list.type-1;
     item.text=cryptify(id('noteField').value,keyCode);
     // console.log("encrypted note: "+item.text);
     console.log('ADD new item (owner: '+item.owner+') to list '+list.id+': '+list.name);
@@ -265,7 +258,6 @@ function populateList(decrypt) {
 // LOAD LIST ITEMS
 function loadListItems() {
 	console.log("load notes for category "+category+" - depth: "+depth);
-	// NEW CODE...
 	if(category==null) {
 		depth=0;
 		id('heading').innerHTML='Locker';
@@ -288,56 +280,6 @@ function loadListItems() {
 		showDialog('importDialog',true);
 	}
 	populateList(true);
-	/* OLD CODE...
-	var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-	var item={};
-	if(list.id!==null) {
-		console.log("get list item "+list.id);
-		var request=dbObjectStore.get(list.id);
-		request.onsuccess=function() {
-			item=event.target.result;
-			console.log("list item "+item.text+"; owner: "+item.owner);
-			list.name=cryptify(item.text,keyCode);
-			// NO LONGER USE type list.type=item.type; // types 1-3 only
-		};
-		request.onerror=function() {console.log("error retrieving item "+list.id);}
-	}
-	else {
-	    list.name="Locker";
-	    // NO LONGER USE type list.type=1;
-	}
-	items=[];
-	request=dbObjectStore.openCursor();
-	request.onsuccess=function(event) {
-		var cursor=event.target.result;
-		if(cursor) {
-			if(cursor.value.owner==list.id) { // just items in this list
-				// NO LONGER NEEDED? if(cursor.value.type>3) cursor.value.type-=4;
-				items.push(cursor.value);
-				console.log("item id: "+cursor.value.id+"; index: "+cursor.value.index+"; "+cursor.value.text+"; owner: "+cursor.value.owner);
-			}
-			cursor.continue ();
-		}
-		else {
-			console.log("No more entries! "+items.length+" items");
-			if(list.id===null) { // backup checks
-				if(items.length<1) { // no data: restore backup?
-				    console.log("no data - restore backup?");
-				    // document.getElementById('importDialog').style.display='block';
-				    showDialog('importDialog',true);
-				}
-				else { // monthly backups
-				    var today=new Date();
-				    console.log('this month: '+today.getMonth()+"; last save: "+lastSave);
-				    if(today.getMonth()!=lastSave) backup();
-				}
-			}
-			populateList(true);
-		}
-	}
-	*/
 }
 // DATA
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
@@ -354,7 +296,7 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("json: "+json);
 		var items=json.items;
 		console.log(items.length+" items loaded");
-		// CREATE NEW DATABASE
+		/* CREATE NEW DATABASE
 		var categories=[];
 		for(var i=0;i<items.length;i++) {
 			var item={};
@@ -382,7 +324,7 @@ id("fileChooser").addEventListener('change', function() {
 			item.text=items[i].text;
 			items[i]=item;
 		}
-		//*/
+		*/
 		var data=JSON.stringify(items);
 		window.localStorage.setItem('items',data);
 		showDialog('importDialog',false);
@@ -407,43 +349,6 @@ function backup() {
     document.body.appendChild(a);
     a.click();
 	display(fileName+" saved to downloads folder");
-	/* OLD CODE...
-	var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-	var request=dbObjectStore.openCursor();
-	var items=[];
-	dbTransaction=db.transaction('items',"readwrite");
-	console.log("indexedDB transaction ready");
-	dbObjectStore=dbTransaction.objectStore('items');
-	console.log("indexedDB objectStore ready");
-	request=dbObjectStore.openCursor();
-	request.onsuccess=function(event) {  
-		var cursor=event.target.result;  
-    		if(cursor) { // read in every item
-			    items.push(cursor.value);
-			    cursor.continue();  
-    		}
-		else {
-			console.log(items.length+" items - save");
-			var data={'items': items};
-			var json=JSON.stringify(data);
-			var blob=new Blob([json], {type:"data:application/json"});
-  			var a=document.createElement('a');
-			a.style.display='none';
-    		var url=window.URL.createObjectURL(blob);
-			console.log("data ready to save: "+blob.size+" bytes");
-   			a.href=url;
-   			a.download=fileName;
-    		document.body.appendChild(a);
-    		a.click();
-			display(fileName+" saved to downloads folder");
-			var today=new Date();
-			lastSave=today.getMonth();
-			window.localStorage.setItem('lastSave',lastSave); // remember month of backup
-		}
-	}
-	*/
 }
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
@@ -525,26 +430,6 @@ items=JSON.parse(data);
 console.log(items.length+' items loaded');
 list.category=null;
 depth=0;
-/* load items from database
-var request=window.indexedDB.open("LockerDB");
-request.onsuccess=function (event) {
-	db=event.target.result;
-	console.log("DB open");
-	list.id=list.owner=null;
-};
-request.onupgradeneeded=function(event) {
-	db=event.currentTarget.result;
-	if(!db.objectStoreNames.contains('items')) {
-		var dbObjectStore=db.createObjectStore("items",{ keyPath:"id",autoIncrement:true });
-		console.log("items store created");
-	}
-	else console.log("items store exists");
-	console.log("database ready");
-}
-request.onerror=function(event) {
-	alert("indexedDB error code "+event.target.errorCode);
-};
-*/
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
 	console.log('Active service worker found, no need to register')
