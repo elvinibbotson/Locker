@@ -195,7 +195,7 @@ id("fileChooser").addEventListener('change', function() {
 	  	var data=evt.target.result;
 		var json=JSON.parse(data);
 		console.log("json: "+json);
-		var items=json.items;
+		items=json.items;
 		console.log(items.length+" items loaded");
 		saveData();
 		showDialog('importDialog',false);
