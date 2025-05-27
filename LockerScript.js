@@ -196,7 +196,7 @@ id("fileChooser").addEventListener('change', function() {
 		var json=JSON.parse(data);
 		console.log("json: "+json);
 		items=json.items;
-		console.log(items.length+" items loaded");
+		console.log(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
 		saveData();
 		showDialog('importDialog',false);
 		display("data imported - restart");
