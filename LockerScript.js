@@ -36,6 +36,7 @@ id('main').addEventListener('touchend', function(event) {
 })
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
+	/*
 	if(depth>0) { // list heading - show item edit dialog
 		id(listField.value=list.name);
 		console.log('edit list header - '+items.length+' items');
@@ -49,7 +50,9 @@ id('heading').addEventListener('click',function() {
 		id('listSaveButton').style.display='block';
 		showDialog('listDialog',true);
 	}
-	else showDialog('dataDialog',true);
+	else 
+	*/
+	if(level<1) showDialog('dataDialog',true);
 });
 // DISPLAY MESSAGE
 function display(message) {
@@ -74,7 +77,7 @@ function showDialog(dialog,show) {
 // ADD ITEMS
 id('buttonNew').addEventListener('click', function(){
 	item={};
-    if(depth<1) { // top level - can only add lists
+    if(depth<1) { // top level - can only add new category
     	id('listField').value='';
     	id('deleteListButton').style.display='none';
     	id('listAddButton').style.display='block';
@@ -102,24 +105,19 @@ id('addNoteButton').addEventListener('click',function() {
 // LIST
 id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
     item={};
-    item.owner=list.id; // NEW
-    // NO LONGER USE type -USE DEPTH INSTEAD item.type=1;
+    item.category=null;
     item.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+item.text);
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-	var addRequest=dbObjectStore.add(item);
-	addRequest.onsuccess=function(event) {
-		console.log('new list added');
-		showDialog('listDialog',false);
-		loadListItems();
-	}
-	 addRequest.onerror=function(event) {cosnole.log('error adding new list');}
+    items.push(item);
+    console.log('new category added');
+	showDialog('listDialog',false);
+	loadListItems();
 })
+/* CAN'T EDIT CATEGORIES
 id('listSaveButton').addEventListener('click', function() {
 	list.text=cryptify(id('listField').value,keyCode);
     console.log('encrypt to '+list.text);
+    item.category=category
     var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
     var putRequest=dbObjectStore.put(list); // WAS var putRequest=dbObjectStore.put(data);
@@ -130,11 +128,13 @@ id('listSaveButton').addEventListener('click', function() {
 	};
 	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
 })
+*/
 id('deleteListButton').addEventListener('click',function() {
-	if(items.length>0) {
+	if(listItems.length>0) {
 		display('CAN ONLY DELETE EMPTY LISTS');
 		return;
 	}
+	/* OLD CODE...
 	var dbTransaction=db.transaction('items',"readwrite");
 	var dbObjectStore=dbTransaction.objectStore('items');
 	console.log("database ready to delete list item");
@@ -150,7 +150,8 @@ id('deleteListButton').addEventListener('click',function() {
 	    
 	}
 	delRequest.onerror=function(event) {console.log('delete failed')};
-    items.splice(itemIndex,1);
+	*/
+    items.splice(item.index,1);
     console.log("delete complete");
     populateList();
     itemIndex=null;
@@ -270,12 +271,13 @@ function loadListItems() {
 	for(var i=0;i<items.length;i++) {
 		if(items[i].category==category) {
 			item={};
+			item.index=i;
 			item.code=items[i].text; // encrypted
 			item.text=cryptify(items[i].text,keyCode);
 			listItems.push(item);
 		}
 	}
-	if(listItems.length<1) { // no data: restore backup?
+	if(level<1 && listItems.length<1) { // no data: restore backup?
 		console.log("no data - restore backup?");
 		showDialog('importDialog',true);
 	}
@@ -296,7 +298,7 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("json: "+json);
 		var items=json.items;
 		console.log(items.length+" items loaded");
-		/* CREATE NEW DATABASE
+		// CREATE NEW DATABASE
 		var categories=[];
 		for(var i=0;i<items.length;i++) {
 			var item={};
@@ -324,7 +326,7 @@ id("fileChooser").addEventListener('change', function() {
 			item.text=items[i].text;
 			items[i]=item;
 		}
-		*/
+		//*/
 		var data=JSON.stringify(items);
 		window.localStorage.setItem('items',data);
 		showDialog('importDialog',false);
