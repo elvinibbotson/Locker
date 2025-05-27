@@ -9,46 +9,30 @@
     <meta name="application-name" content="Locker">
 </head>
 <body>
-    
 <div id='header'>
     <div id='heading'>Locker</div>
 </div>
-
 <div id="main">
 	<ul id="list"></ul>
-	
 <div id='messageDialog' class='dialog'><p id='message'></p></div>
-
 <div id='buttonNew' class='round-button'><img src='addButton24px.svg'/></div>
-
-<div id="addDialog" class='dialog'>
-	<div class="dialog-buttons">
-		add new <button id='addListButton' class='text-button'>LIST</button>
-		<button id='addNoteButton' class='text-button'>NOTE</button>
-	</div>
-</div>
-
-<div id='listDialog' class='dialog'>
-    <div id='listDialogTitle' class='dialog-title'>category</div>
-    <p><input type="text" id="listField" size="15"/></p>
+<div id='categoryDialog' class='dialog'>
+    <div id='categoryDialogTitle' class='dialog-title'>category</div>
+    <p><input type="text" id="categoryField" size="15"/></p>
     <div class="dialog-buttons">
-    	<button id="listAddButton" class="icon-button"></button>
-    	<button id="listSaveButton" class="icon-button"></button>
-		<button id="deleteListButton" class="icon-button"></button>
+    	<button id="addCategoryButton" class="icon-button"></button>
 	</div>
 </div>
-
 <div id='noteDialog' class='dialog'>
     <div id='noteTitle' class='dialog-title'>note</div>
     <textarea id="noteField" rows='5' cols='30'></textarea>
     <br>
     <div class="dialog-buttons">
-    	<button id="noteAddButton" class="icon-button"></button>
-    	<button id="noteSaveButton" class="icon-button"></button>
+    	<button id="addNoteButton" class="icon-button"></button>
+    	<button id="saveNoteButton" class="icon-button"></button>
 		<button id="deleteNoteButton" class="icon-button"></button>
 	</div>
 </div>
-
 <div id='keyDialog' class='dialog'>
     <div class='dialog-title'>
         <span id='keyTitle'>PIN: </span>
@@ -63,12 +47,10 @@
 		<button class='key-button' onclick='tapKey("0");'>0</button>
 	</center>
 </div>
-
 <div id='dataDialog' class='dialog'>
 	<button id='backupButton' class='text-button'>BACKUP</button>
 	<button id='importButton' class='text-button'>IMPORT</button> data
 </div>
-
 <div id="importDialog" class="dialog">
 	<div class="dialog-title">Load from file...</div>
 	<input type="file" id="fileChooser">

@@ -5,18 +5,16 @@ function id(el) {
 // GLOBAL VARIABLES	
 var items=[];
 var item=null;
+var categories=[];
+var category=null;
 var itemIndex=0;
 var listItems=[];
-var category=null;
-var currentListItem=null;
+var listItem=null;
 var currentDialog=null;
-var depth=0;
-var lastSave=null;
 var pin='';
 var keyCode=null;
-var unlocked=false;
 var dragStart={};
-// DRAG TO CHANGE DEPTH
+// DRAG TO RETURN TO CATEGORY LIST
 id('main').addEventListener('touchstart', function(event) {
     // console.log(event.changedTouches.length+" touches");
     dragStart.x=event.changedTouches[0].clientX;
@@ -27,32 +25,15 @@ id('main').addEventListener('touchend', function(event) {
     drag.x=dragStart.x-event.changedTouches[0].clientX;
     drag.y=dragStart.y-event.changedTouches[0].clientY;
     if(Math.abs(drag.y)>50) return; // ignore vertical drags
-    if((drag.x<-50)&&(depth>0)) { // drag right to decrease depth...
+    if((drag.x<-50)&&category) {
         category=null;
-        depth=0;
-        loadListItems();
+        listCategories();
     }
     else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
 })
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
-	/*
-	if(depth>0) { // list heading - show item edit dialog
-		id(listField.value=list.name);
-		console.log('edit list header - '+items.length+' items');
-		for(var i in items) console.log('item '+i+': '+items[i].text);
-		if(items.length>0) {
-			id('deleteListButton').style.display='none';
-			console.log('disable delete');
-		}
-		else id('deleteListButton').style.display='block';
-		id('listAddButton').style.display='none';
-		id('listSaveButton').style.display='block';
-		showDialog('listDialog',true);
-	}
-	else 
-	*/
-	if(level<1) showDialog('dataDialog',true);
+	if(category===null) showDialog('dataDialog',true);
 });
 // DISPLAY MESSAGE
 function display(message) {
@@ -74,219 +55,137 @@ function showDialog(dialog,show) {
         id('buttonNew').style.display='block';
     }
 }
-// ADD ITEMS
+// NEW CATEGORY/NOTE
 id('buttonNew').addEventListener('click', function(){
 	item={};
-    if(depth<1) { // top level - can only add new category
-    	id('listField').value='';
-    	id('deleteListButton').style.display='none';
-    	id('listAddButton').style.display='block';
-    	id('listSaveButton').style.display='none';
-        showDialog('listDialog',true);
+    if(category==null) { // add new category
+    	id('categoryField').value='';
+    	id('addCategoryButton').style.display='block';
+        showDialog('categoryDialog',true);
     }
-    else { // lower level: can only add notes
+    else { // add note
     	id('noteField').value='';
     	id('deleteNoteButton').style.display='none';
-    	id('noteAddButton').style.display='block';
-    	id('noteSaveButton').style.display='none';
+    	id('addNoteButton').style.display='block';
+    	id('saveNoteButton').style.display='none';
         showDialog('noteDialog',true);
     }
 })
-id('addListButton').addEventListener('click',function() {
-	id('listField').value='';
-    id('deleteListButton').style.display='none';
-    id('listAddButton').style.display='block';
-	id('listSaveButton').style.display='none';
-    showDialog('listDialog',true);
+id('addCategoryButton').addEventListener('click',function() {
+	category=id('categoryField').value;
+	if(category.length<1) return; // no category name
+	if(categories.indexOf('category')>=0) return; // category already exists
+	list.innerHTML='';
+	id('header').innerText=category;
+	showDialog('categoryDialog',false);
+	console.log('new category - '+category);
 })
-id('addNoteButton').addEventListener('click',function() {
-    showDialog('noteDialog',true);
-})
-// LIST
-id('listAddButton').addEventListener('click', function() { // SPLIT INTO ADD AND SAVE FUNCTIONS
+id('addNoteButton').addEventListener('click', function() {
+	console.log('add note '+id('noteField').value);
     item={};
-    item.category=null;
-    item.text=cryptify(id('listField').value,keyCode);
-    console.log('encrypt to '+item.text);
-    items.push(item);
-    console.log('new category added');
-	showDialog('listDialog',false);
-	loadListItems();
-})
-/* CAN'T EDIT CATEGORIES
-id('listSaveButton').addEventListener('click', function() {
-	list.text=cryptify(id('listField').value,keyCode);
-    console.log('encrypt to '+list.text);
-    item.category=category
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-    var putRequest=dbObjectStore.put(list); // WAS var putRequest=dbObjectStore.put(data);
-	putRequest.onsuccess=function(event) {
-		console.log('item '+list.index+" updated");
-		showDialog('listDialog',false);
-        loadListItems();
-	};
-	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
-})
-*/
-id('deleteListButton').addEventListener('click',function() {
-	if(listItems.length>0) {
-		display('CAN ONLY DELETE EMPTY LISTS');
-		return;
-	}
-	/* OLD CODE...
-	var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready to delete list item");
-	console.log('delete list item '+itemIndex+' id: '+list.id); // items[itemIndex].id);
-	var delRequest=dbObjectStore.delete(list.id); // items[itemIndex].id);
-	delRequest.onsuccess=function() {
-	    console.log('deleted from database');
-	    showDialog('listDialog',false);
-        depth=0;
-        list.id=list.owner=null;
-        console.log('list.id: '+list.id+' depth: '+depth);
-        loadListItems();
-	    
-	}
-	delRequest.onerror=function(event) {console.log('delete failed')};
-	*/
-    items.splice(item.index,1);
-    console.log("delete complete");
-    populateList();
-    itemIndex=null;
-    currentListItem=null;
-})
-// NOTE
-id('deleteNoteButton').addEventListener('click', function() {
-	var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready to delete item");
-	console.log('delete item '+itemIndex+' id: '+items[itemIndex].id);
-	var delRequest=dbObjectStore.delete(items[itemIndex].id);
-	delRequest.onsuccess=function() {
-	    console.log('deleted from database');
-	    showDialog('noteDialog',false);
-	}
-	delRequest.onerror=function(event) {console.log('delete failed')};
-    items.splice(itemIndex,1);
-    console.log("delete complete");
-    populateList();
-    itemIndex=null;
-    currentListItem=null;
-})
-id('noteAddButton').addEventListener('click', function() {
-    item={};
-    item.owner=list.id;
+    item.category=category;
     item.text=cryptify(id('noteField').value,keyCode);
-    // console.log("encrypted note: "+item.text);
-    console.log('ADD new item (owner: '+item.owner+') to list '+list.id+': '+list.name);
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-    var addRequest=dbObjectStore.add(item);
-	addRequest.onsuccess=function(event) {
-		item.id=event.target.result;
-		console.log("new item added - id is "+item.id);
-		showDialog('noteDialog',false);
-    	itemIndex=null;
-    	currentListItem=null;
-    	loadListItems();
-	}
-	addRequest.onerror=function(event) {console.log("error adding new item");};
-    
+    console.log('encrypted to '+item.text);
+    items.push(item);
+    saveData();
+    itemIndex=null;
+    showDialog('noteDialog',false);
+    listCategoryItems();
+    console.log('note added');
 })
-id('noteSaveButton').addEventListener('click', function() {
-	item.text=cryptify(id('noteField').value,keyCode);
+// EDIT NOTE
+id('saveNoteButton').addEventListener('click', function() {
+	console.log('update item '+itemIndex);
+	itemIndex=listItems[itemIndex].index;
+	console.log('ie. item '+itemIndex);
+	item={};
+    item.category=category;
+    item.text=cryptify(id('noteField').value,keyCode);
     console.log("encrypted note: "+item.text);
-    var dbTransaction=db.transaction('items',"readwrite");
-	var dbObjectStore=dbTransaction.objectStore('items');
-	console.log("database ready");
-	var putRequest=dbObjectStore.put(item);
-	putRequest.onsuccess=function(event) {
-		console.log('item updated');
-		showDialog('noteDialog',false);
-    	itemIndex=null;
-    	currentListItem=null;
-    	loadListItems();
-	};
-	putRequest.onerror=function(event) {console.log("error updating item "+item.index);};
+    items[itemIndex]=item;
+    saveData();
+    console.log('note updated');
+    showDialog('noteDialog',false);
+    listCategoryItems();
 })
-// POPULATE LIST
-function populateList(decrypt) {
-    var listItem;
-    console.log('first listItem is '+listItems[0].text);
-    id("list").innerHTML=""; // clear list
-	console.log("populate list with "+listItems.length + " items - depth: "+depth);
+id('deleteNoteButton').addEventListener('click', function() {
+	console.log('delete item '+itemIndex);
+	itemIndex=listItems[itemIndex].index;
+	console.log('ie. item '+itemIndex);
+    items.splice(itemIndex,1);
+    saveData();
+    console.log("delete complete");
+    showDialog('noteDialog',false);
+    listCategoryItems();
+    itemIndex=null;
+})
+// LIST CATEGORIES
+function listCategories() {
+	console.log('list categories');
+	listItem;
+	id("list").innerHTML=""; // clear list
+	categories.sort(function(a,b){ // sort alphabetically
+		if(a.toUpperCase()<b.toUpperCase()) return -1;
+		if(a.toUpperCase()>b.toUpperCase()) return 1;
+		return 0;
+	});
+	for(var i in categories) {
+		console.log('list '+categories[i]);
+		listItem=document.createElement('li');
+		listItem.index=i;
+		listItem.innerText=categories[i];
+		listItem.addEventListener('click',function() {
+			itemIndex=this.index;
+			console.log('open item '+itemIndex);
+			category=categories[this.index];
+			console.log('list category '+categories[this.index]);
+			listCategoryItems();
+		});
+		listItem.style.fontWeight='bold'; // lists are bold
+		id('list').appendChild(listItem);
+	}
+	id('heading').innerText='Locker';
+}
+// LIST ITEMS IN CATEGORY
+function listCategoryItems() {
+	console.log('list items');
+	listItems=[];
+	id("list").innerHTML=""; // clear list
+	for(var i in items) {
+		if(items[i].category==category) {
+			listItem={};
+			listItem.index=i;
+			listItem.text=cryptify(items[i].text,keyCode);
+			listItems.push(listItem);
+		}
+	}
 	listItems.sort(function(a,b){ // sort alphabetically
 		if(a.text.toUpperCase()<b.text.toUpperCase()) return -1;
 		if(a.text.toUpperCase()>b.text.toUpperCase()) return 1;
 		return 0;
 	});
-	for(var i in listItems) {
-	    console.log('add item '+i+': '+listItems[i].text);
-	    // all items have text
+	for(i in listItems) {
+		console.log('list '+listItems[i].text);
 		listItem=document.createElement('li');
 		listItem.index=i;
-	 	listItem.innerText=listItems[i].text;
-		if(depth<1) { // tap on category to open it
-		    listItem.addEventListener('click',function() {
-	 	    	itemIndex=this.index;
-	 	    	console.log('open item '+itemIndex);
-		    	category=listItems[this.index].code;
-		    	console.log('open list '+listItems[this.index].text);
-		    	depth++;
-		    	loadListItems();
-	 		});
-		    listItem.style.fontWeight='bold'; // lists are bold
-		}
-		else { // tap on note to edit it
-			listItem.addEventListener('click',function() {
-				itemIndex=this.index;
-				item=listItems[this.index];
-				console.log('edit note '+i+': '+item.text);
-				id('noteField').value=item.text;
-				id('deleteNoteButton').style.display='block';
-				id('noteAddButton').style.display='none';
-				id('noteSaveButton').style.display='block';
-				// console.log('should say '+item.text+'; says '+id('noteField').value);
-				showDialog('noteDialog',true);
-			})
-		}
+		listItem.innerText=listItems[i].text;
+		listItem.addEventListener('click',function() {
+			itemIndex=this.index;
+			item=listItems[this.index];
+			console.log('edit note '+i+': '+item.text);
+			id('noteField').value=item.text;
+			id('deleteNoteButton').style.display='block';
+			id('addNoteButton').style.display='none';
+			id('saveNoteButton').style.display='block';
+			showDialog('noteDialog',true);
+		});
 		id('list').appendChild(listItem);
 	}
-}
-// LOAD LIST ITEMS
-function loadListItems() {
-	console.log("load notes for category "+category+" - depth: "+depth);
-	if(category==null) {
-		depth=0;
-		id('heading').innerHTML='Locker';
-	}
-	else {
-		depth=1;
-		id('heading').innerHTML=cryptify(category,keyCode);
-	}
-	listItems=[];
-	for(var i=0;i<items.length;i++) {
-		if(items[i].category==category) {
-			item={};
-			item.index=i;
-			item.code=items[i].text; // encrypted
-			item.text=cryptify(items[i].text,keyCode);
-			listItems.push(item);
-		}
-	}
-	if(level<1 && listItems.length<1) { // no data: restore backup?
-		console.log("no data - restore backup?");
-		showDialog('importDialog',true);
-	}
-	populateList(true);
+	id('heading').innerText=category;
 }
 // DATA
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
 id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
-// RESTORE BACKUP
 id("fileChooser").addEventListener('change', function() {
 	var file=id('fileChooser').files[0];
 	console.log("file: "+file+" name: "+file.name);
@@ -298,43 +197,12 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("json: "+json);
 		var items=json.items;
 		console.log(items.length+" items loaded");
-		// CREATE NEW DATABASE
-		var categories=[];
-		for(var i=0;i<items.length;i++) {
-			var item={};
-			if(items[i].owner===null) { // category
-				var category={};
-				category.id=items[i].id;
-				category.text=items[i].text;
-				categories.push(category);
-				item.category=null;
-				console.log('item '+i+' is a category item');
-			}
-			else { // note
-				var found=false;
-				var j=0;
-				while(j<categories.length && !found) {
-					if(categories[j].id==items[i].owner) {
-						found=true;
-						item.category=categories[j].text;
-						console.log('item '+i+' is a note item in category '+item.category);
-					}
-					else j++;
-				}
-				if(!found) console.log('NO CATEGORY MATCH');
-			}
-			item.text=items[i].text;
-			items[i]=item;
-		}
-		//*/
-		var data=JSON.stringify(items);
-		window.localStorage.setItem('items',data);
+		saveData();
 		showDialog('importDialog',false);
 		display("data imported - restart");
   	});
   	fileReader.readAsText(file);
 });
-// BACKUP
 function backup() {
   	console.log("EXPORT");
 	var fileName="LockerData.json";
@@ -351,6 +219,11 @@ function backup() {
     document.body.appendChild(a);
     a.click();
 	display(fileName+" saved to downloads folder");
+}
+function saveData() {
+	var data=JSON.stringify(items);
+	window.localStorage.setItem('items',data);
+	console.log('data saved');
 }
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
@@ -395,9 +268,9 @@ function tapKey(n) {
     	}
     	else if(pin==id('keyCheck').value) { // set keyCode step 2 or unlock
         	window.localStorage.keyCode=cryptify(pin,'secrets');
-        	unlocked=true;
+        	// unlocked=true;
         	showDialog('keyDialog',false);
-        	loadListItems();
+        	listCategories();
         	return true;
     	}
     	else {
@@ -428,10 +301,13 @@ else { // start-up - enter PIN
     showDialog('keyDialog',true);
 }
 var data=window.localStorage.getItem('items');
-items=JSON.parse(data);
-console.log(items.length+' items loaded');
-list.category=null;
-depth=0;
+var items=JSON.parse(data);
+categories=[];
+for(var i in items) {
+	if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
+}
+console.log(items.length+' items loaded; '+categories.length+' categories');
+category=null;
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
 	console.log('Active service worker found, no need to register')

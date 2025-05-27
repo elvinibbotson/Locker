@@ -10,10 +10,8 @@ html, body {
   background-color: dimgray;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
-
 html {
   overflow: hidden; }
-
 body {
   display: -webkit-box;
   display: -webkit-flex;
@@ -39,20 +37,17 @@ body {
       -ms-flex-line-pack: stretch;
           align-content: stretch;
 }
- 
 input[type=text] {
 	font-size: 1.5em;
 	height: 24px;
 	color: white;
     background-color: dimgray;
 }
-
 textarea {
     font-size: 1.2em;
     color: white;
     background-color: dimgray;
 }
-
 li {
 	width: 100%;
 	margin-bottom: 5px;
@@ -61,7 +56,6 @@ li {
 	color: white;
 	display: block;
 }
-
 .dialog {
   	position: fixed;
 	left: 0;
@@ -76,25 +70,21 @@ li {
 	z-index: 10;
 	display: none;
 }
-
 .dialog-title {
   font-size: 1.2em;
   font-weight: bold;
 }
-
 .dialog-buttons {
     width: 90%;
     padding: 10px;
     margin: 15px;
 }
-
 .icon-button {
     width: 36px;
     height: 24px;
     border: none;
     padding: 12px;
 }
-
 .key-button {
 	width: 70px;
 	height: 70px;
@@ -107,7 +97,6 @@ li {
 	font-weight: bold;
 	background: gray;
 }
-
 .text-button {
 	border: 2px solid white;
 	border-radius: 10px;
@@ -118,7 +107,6 @@ li {
 	color: white;
 	background-color:gray;
 }
-
 .round-button {
 	display: block;
 	position: fixed;
@@ -131,14 +119,12 @@ li {
 	background: gray;
 	z-index: 50;
 }
-
 .round-button img {
 	display: block;
 	width: 24px;
 	height: 24px;
 	padding: 13px;
 }
-
 #header {
     position: fixed;
     top: 0;
@@ -149,14 +135,12 @@ li {
     background-color: black;
     z-index: 10;
 }
-
 #heading {
   color: white;
   font-family: 'Courier',monospace;
   font-weight: bold;
   font-size: 1.5em;
 }
-
 #main {
     width: 100%;
     position: relative;
@@ -170,7 +154,6 @@ li {
   -webkit-overflow-scrolling: touch;
   background-color: dimgray;
 }
-  
 #list {
     margin-top: 30px;
     list-style: none;
@@ -180,38 +163,31 @@ li {
     padding: 0 0.5em;
     background-color: dimgray;
 }
-
 #keypad {
 	float: center;
 }
-
-#deleteListButton, #deleteNoteButton {
+#deleteNoteButton {
 	float: left;
 	margin-right: 48px;
 	background: url(deleteButton24px.svg) center center no-repeat;
 }
-
-#listAddButton, #noteAddButton {
+#addCategoryButton, #addNoteButton {
 	float: right;
     background: url(addButton24px.svg) center center no-repeat;
 }
-
-#listSaveButton, #noteSaveButton {
+#saveNoteButton {
 	float: right;
     background: url(okButton24px.svg) center center no-repeat;
 }
-
 #pinField {
 	font-size: 2em;
 	font-weight: bold;
 	color: white;
 	background-color: gray;
 }
-
 #confirmKeyButton {
     background: url(okButton24px.svg) center center no-repeat;
 }
-
 #fileChooser {
 	font-size: 1.5em;
 }
