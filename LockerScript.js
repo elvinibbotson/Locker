@@ -196,7 +196,7 @@ id("fileChooser").addEventListener('change', function() {
 		var json=JSON.parse(data);
 		console.log("json: "+json);
 		items=json.items;
-		console.log(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
+		alert(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
 		saveData();
 		showDialog('importDialog',false);
 		display("data imported - restart");
@@ -306,7 +306,7 @@ categories=[];
 for(var i in items) {
 	if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
 }
-console.log(items.length+' items loaded; '+categories.length+' categories');
+alert(items.length+' items loaded; '+categories.length+' categories');
 category=null;
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
