@@ -14,6 +14,7 @@ var currentDialog=null;
 var pin='';
 var keyCode=null;
 var dragStart={};
+var root; // OPFS root directory
 // DRAG TO RETURN TO CATEGORY LIST
 id('main').addEventListener('touchstart', function(event) {
     // console.log(event.changedTouches.length+" touches");
@@ -87,7 +88,7 @@ id('addNoteButton').addEventListener('click', function() {
     item.text=cryptify(id('noteField').value,keyCode);
     console.log('encrypted to '+item.text);
     items.push(item);
-    saveData();
+    writeData(); // WAS saveData();
     itemIndex=null;
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -103,7 +104,7 @@ id('saveNoteButton').addEventListener('click', function() {
     item.text=cryptify(id('noteField').value,keyCode);
     console.log("encrypted note: "+item.text);
     items[itemIndex]=item;
-    saveData();
+    writeData(); // WAS saveData();
     console.log('note updated');
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -113,7 +114,7 @@ id('deleteNoteButton').addEventListener('click', function() {
 	itemIndex=listItems[itemIndex].index;
 	console.log('ie. item '+itemIndex);
     items.splice(itemIndex,1);
-    saveData();
+    writeData(); // WAS saveData();
     console.log("delete complete");
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -148,10 +149,11 @@ function listCategories() {
 }
 // LIST ITEMS IN CATEGORY
 function listCategoryItems() {
-	console.log('list items');
+	console.log('list items in category '+category);
 	listItems=[];
 	id("list").innerHTML=""; // clear list
 	for(var i in items) {
+		console.log('item '+i+' category: '+items[i].category);
 		if(items[i].category==category) {
 			listItem={};
 			listItem.index=i;
@@ -184,6 +186,38 @@ function listCategoryItems() {
 	id('heading').innerText=category;
 }
 // DATA
+async function readData() {
+	root=await navigator.storage.getDirectory();
+	console.log('OPFS root directory: '+root);
+	var persisted=await navigator.storage.persist();
+	console.log('persisted: '+persisted);
+	var handle=await root.getFileHandle('LockerData');
+	var file=await handle.getFile();
+	var loader=new FileReader();
+    loader.addEventListener('load',function(evt) {
+    	var data=evt.target.result;
+    	console.log('data: '+data.length+' bytes');
+    	items=JSON.parse(data);
+		categories=[];
+		for(var i in items) {
+			if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
+		}
+		console.log(items.length+' items loaded; '+categories.length+' categories');
+		category=null;
+	});
+	loader.addEventListener('error',function(event) {
+    	alert('load failed - '+event);
+	});
+	loader.readAsText(file);
+}
+async function writeData() {
+	var data=JSON.stringify(items);
+	var handle=await root.getFileHandle('LockerData',{create:true});
+	var writable=await handle.createWritable();
+    await writable.write(data);
+    await writable.close();
+	console.log('data saved to LockerData');
+}
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
 id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
 id("fileChooser").addEventListener('change', function() {
@@ -197,7 +231,7 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("json: "+json);
 		items=json.items;
 		console.log(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
-		saveData();
+		writeData(); // WAS saveData();
 		showDialog('importDialog',false);
 		display("data imported - restart");
   	});
@@ -220,11 +254,13 @@ function backup() {
     a.click();
 	display(fileName+" saved to downloads folder");
 }
+/*
 function saveData() {
 	var data=JSON.stringify(items);
 	window.localStorage.setItem('items',data);
 	console.log('data saved');
 }
+*/
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
 	var i=0;
@@ -300,6 +336,8 @@ else { // start-up - enter PIN
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
 }
+readData();
+/*
 var data=window.localStorage.getItem('items');
 var items=JSON.parse(data);
 categories=[];
@@ -308,6 +346,7 @@ for(var i in items) {
 }
 console.log(items.length+' items loaded; '+categories.length+' categories');
 category=null;
+*/
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
 	console.log('Active service worker found, no need to register')
