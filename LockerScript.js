@@ -14,7 +14,8 @@ var currentDialog=null;
 var pin='';
 var keyCode=null;
 var dragStart={};
-var root; // OPFS root directory
+var backupDay;
+// var root; // OPFS root directory
 // DRAG TO RETURN TO CATEGORY LIST
 id('main').addEventListener('touchstart', function(event) {
     // console.log(event.changedTouches.length+" touches");
@@ -36,11 +37,12 @@ id('main').addEventListener('touchend', function(event) {
 id('heading').addEventListener('click',function() {
 	if(category===null) showDialog('dataDialog',true);
 });
-// DISPLAY MESSAGE
+/* DISPLAY MESSAGE
 function display(message) {
 	id('message').innerText=message;
 	showDialog('messageDialog',true);
 }
+*/
 // SHOW/HIDE DIALOG
 function showDialog(dialog,show) {
     console.log('show '+dialog+': '+show);
@@ -88,7 +90,7 @@ id('addNoteButton').addEventListener('click', function() {
     item.text=cryptify(id('noteField').value,keyCode);
     console.log('encrypted to '+item.text);
     items.push(item);
-    writeData(); // WAS saveData();
+    save(); // WAS saveData();
     itemIndex=null;
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -104,7 +106,7 @@ id('saveNoteButton').addEventListener('click', function() {
     item.text=cryptify(id('noteField').value,keyCode);
     console.log("encrypted note: "+item.text);
     items[itemIndex]=item;
-    writeData(); // WAS saveData();
+    save(); // WAS saveData();
     console.log('note updated');
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -114,7 +116,7 @@ id('deleteNoteButton').addEventListener('click', function() {
 	itemIndex=listItems[itemIndex].index;
 	console.log('ie. item '+itemIndex);
     items.splice(itemIndex,1);
-    writeData(); // WAS saveData();
+    save(); // WAS saveData();
     console.log("delete complete");
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -122,7 +124,7 @@ id('deleteNoteButton').addEventListener('click', function() {
 })
 // LIST CATEGORIES
 function listCategories() {
-	console.log('list categories');
+	console.log('list '+categories.length+' categories');
 	listItem;
 	id("list").innerHTML=""; // clear list
 	categories.sort(function(a,b){ // sort alphabetically
@@ -186,6 +188,33 @@ function listCategoryItems() {
 	id('heading').innerText=category;
 }
 // DATA
+function load() {
+	var data=localStorage.getItem('LockerData');
+	if(!data) {
+		id('restoreMessage').innerText='no data - restore?';
+		showDialog('restoreDialog',true);
+		return;
+	}
+	console.log('data: '+data.length+' bytes');
+    items=JSON.parse(data);
+    console.log(items.length+' items');
+	categories=[];
+	for(var i in items) {
+		console.log('item '+i+': '+items[i].text+'; category: '+items[i].category);
+		if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
+	}
+	console.log(items.length+' items loaded; '+categories.length+' categories');
+	category=null;
+	// listCategories();
+	var today=Math.floor(new Date().getTime()/86400000);
+	var days=today-backupDay;
+	if(days>15) days='ages';
+	if(days>4) { // backup reminder every 5 days
+		id('backupMessage').innerText=days+' since last backup';
+		toggleDialog('backupDialog',true);
+	}
+}
+/*
 async function readData() {
 	root=await navigator.storage.getDirectory();
 	console.log('OPFS root directory: '+root);
@@ -210,6 +239,13 @@ async function readData() {
 	});
 	loader.readAsText(file);
 }
+*/
+function save() {
+	var data=JSON.stringify(items);
+	window.localStorage.setItem('LockerData',data);
+	console.log('data saved to LockerData');
+}
+/*
 async function writeData() {
 	var data=JSON.stringify(items);
 	var handle=await root.getFileHandle('LockerData',{create:true});
@@ -218,8 +254,9 @@ async function writeData() {
     await writable.close();
 	console.log('data saved to LockerData');
 }
+*/
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
-id('importButton').addEventListener('click',function() {showDialog('importDialog',true)});
+id('restoreButton').addEventListener('click',function() {showDialog('restoreDialog',true)});
 id("fileChooser").addEventListener('change', function() {
 	var file=id('fileChooser').files[0];
 	console.log("file: "+file+" name: "+file.name);
@@ -228,14 +265,17 @@ id("fileChooser").addEventListener('change', function() {
 		console.log("file read: "+evt.target.result);
 	  	var data=evt.target.result;
 		var json=JSON.parse(data);
-		console.log("json: "+json);
+		// console.log("json: "+json);
 		items=json.items;
 		console.log(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
-		writeData(); // WAS saveData();
-		showDialog('importDialog',false);
-		display("data imported - restart");
+		save(); // WAS saveData();
+		showDialog('restoreDialog',false);
+		// display("data imported - restart");
+		load();
   	});
   	fileReader.readAsText(file);
+  	showDialog('restoreDialog',false);
+  	listCategories();
 });
 function backup() {
   	console.log("EXPORT");
@@ -252,7 +292,7 @@ function backup() {
    	a.download=fileName;
     document.body.appendChild(a);
     a.click();
-	display(fileName+" saved to downloads folder");
+	// display(fileName+" saved to downloads folder");
 }
 /*
 function saveData() {
@@ -336,7 +376,11 @@ else { // start-up - enter PIN
     id('keyCheck').value=keyCode;
     showDialog('keyDialog',true);
 }
-readData();
+backupDay=window.localStorage.getItem('backupDay');
+if(backupDay) console.log('last backup on day '+backupDay);
+else backupDay=0;
+load();
+// readData();
 /*
 var data=window.localStorage.getItem('items');
 var items=JSON.parse(data);
