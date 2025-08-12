@@ -191,8 +191,8 @@ function listCategoryItems() {
 function load() {
 	var data=localStorage.getItem('LockerData');
 	if(!data) {
-		id('restoreMessage').innerText='no data - restore?';
-		showDialog('restoreDialog',true);
+		alert('No data - restore backup file?');
+		showDialog('dataDialog',true);
 		return;
 	}
 	console.log('data: '+data.length+' bytes');
@@ -256,26 +256,31 @@ async function writeData() {
 }
 */
 id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
-id('restoreButton').addEventListener('click',function() {showDialog('restoreDialog',true)});
-id("fileChooser").addEventListener('change', function() {
-	var file=id('fileChooser').files[0];
-	console.log("file: "+file+" name: "+file.name);
-	var fileReader=new FileReader();
-	fileReader.addEventListener('load', function(evt) {
-		console.log("file read: "+evt.target.result);
-	  	var data=evt.target.result;
-		var json=JSON.parse(data);
-		// console.log("json: "+json);
-		items=json.items;
-		console.log(items.length+" items loaded - first is "+items[0].text+' category '+items[0].category);
-		save(); // WAS saveData();
-		showDialog('restoreDialog',false);
-		// display("data imported - restart");
-		load();
-  	});
-  	fileReader.readAsText(file);
-  	showDialog('restoreDialog',false);
-  	listCategories();
+id('restoreButton').addEventListener('click',function() {
+	var event = new MouseEvent('click',{
+		bubbles: true,
+		cancelable: true,
+		view: window
+	});
+	fileChooser.dispatchEvent(event);
+	fileChooser.onchange=(event)=>{
+		var file=id('fileChooser').files[0];
+    	console.log("file name: "+file.name);
+    	var fileReader=new FileReader();
+    	fileReader.addEventListener('load', function(evt) {
+			console.log("file read: "+evt.target.result);
+    		var data=evt.target.result;
+    		var json=JSON.parse(data);
+    		items=json.items;
+			console.log(items.length+" items loaded");
+    		save();
+    		console.log('data imported and saved');
+    		load();
+    	});
+    	fileReader.readAsText(file);
+    	listCategories();
+	}
+	showDialog('dataDialog',false);
 });
 function backup() {
   	console.log("EXPORT");

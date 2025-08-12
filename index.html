@@ -49,17 +49,13 @@
 </div>
 <div id='dataDialog' class='dialog'>
 	<button id='backupButton' class='text-button'>BACKUP</button>
-	<button id='restoreButton' class='text-button'>RESTORE</button> data
-</div>
-<div id="restoreDialog" class="dialog">
-	<div id='restoreMessage' class="dialog-title">Load from file...</div>
-	<input type="file" id="fileChooser">
-	<p>(replaces any existing data) or swipe left to start fresh.</p>
+	<button id='restoreButton' class='text-button'>RESTORE</button>
 </div>
 <div id='backupDialog' class='dialog'>
 	<div id='backupMessage'>data backup</div>
 	<button id='confirmBackup' class='text-button'>BACKUP</button>
 </div>
+<input type="file" id="fileChooser" accept=".json" style="display: none">
 </div>
 <script src="LockerScript.js" async></script>
 </body>
