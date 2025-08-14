@@ -191,7 +191,8 @@ function listCategoryItems() {
 function load() {
 	var data=localStorage.getItem('LockerData');
 	if(!data) {
-		alert('No data - restore backup file?');
+		id('dataMessage').innerText='No data - restore backup?';
+		id('backupButton').disabled=true;
 		showDialog('dataDialog',true);
 		return;
 	}
@@ -208,54 +209,18 @@ function load() {
 	// listCategories();
 	var today=Math.floor(new Date().getTime()/86400000);
 	var days=today-backupDay;
-	if(days>15) days='ages';
 	if(days>4) { // backup reminder every 5 days
-		id('backupMessage').innerText=days+' since last backup';
-		toggleDialog('backupDialog',true);
+		id('dataMessage').innerText=days+' since last backup';
+		id('restoreButton').disabled=true;
+		toggleDialog('dateDialog',true);
 	}
 }
-/*
-async function readData() {
-	root=await navigator.storage.getDirectory();
-	console.log('OPFS root directory: '+root);
-	var persisted=await navigator.storage.persist();
-	console.log('persisted: '+persisted);
-	var handle=await root.getFileHandle('LockerData');
-	var file=await handle.getFile();
-	var loader=new FileReader();
-    loader.addEventListener('load',function(evt) {
-    	var data=evt.target.result;
-    	console.log('data: '+data.length+' bytes');
-    	items=JSON.parse(data);
-		categories=[];
-		for(var i in items) {
-			if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
-		}
-		console.log(items.length+' items loaded; '+categories.length+' categories');
-		category=null;
-	});
-	loader.addEventListener('error',function(event) {
-    	alert('load failed - '+event);
-	});
-	loader.readAsText(file);
-}
-*/
 function save() {
 	var data=JSON.stringify(items);
 	window.localStorage.setItem('LockerData',data);
 	console.log('data saved to LockerData');
 }
-/*
-async function writeData() {
-	var data=JSON.stringify(items);
-	var handle=await root.getFileHandle('LockerData',{create:true});
-	var writable=await handle.createWritable();
-    await writable.write(data);
-    await writable.close();
-	console.log('data saved to LockerData');
-}
-*/
-id('backupButton').addEventListener('click',function() {showDialog('dataDialog',false); backup();});
+id('backupButton').addEventListener('click',backup);
 id('restoreButton').addEventListener('click',function() {
 	var event = new MouseEvent('click',{
 		bubbles: true,
@@ -280,6 +245,8 @@ id('restoreButton').addEventListener('click',function() {
     	fileReader.readAsText(file);
     	listCategories();
 	}
+	id('dataMessage').innerText='';
+	id('backupButton').disabled=false;
 	showDialog('dataDialog',false);
 });
 function backup() {
@@ -297,15 +264,10 @@ function backup() {
    	a.download=fileName;
     document.body.appendChild(a);
     a.click();
-	// display(fileName+" saved to downloads folder");
+	id('dataMessage').innerText='';
+	id('restoreButton').disabled=false;
+	toggleDialog('dataDialog',false);
 }
-/*
-function saveData() {
-	var data=JSON.stringify(items);
-	window.localStorage.setItem('items',data);
-	console.log('data saved');
-}
-*/
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
 	var i=0;

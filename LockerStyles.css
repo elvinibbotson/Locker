@@ -104,6 +104,9 @@ li {
 	color: white;
 	background: none;
 }
+.text-button:disabled {
+	color: gray;
+}
 .round-button {
 	display: block;
 	position: fixed;
