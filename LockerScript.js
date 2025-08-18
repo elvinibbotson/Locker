@@ -51,11 +51,13 @@ function showDialog(dialog,show) {
         id(dialog).style.display='block';
         currentDialog=dialog;
         id('buttonNew').style.display='none';
+        id('curtain').style.height='100%';
     }
     else {
         id(dialog).style.display='none';
         currentDialog=null;
         id('buttonNew').style.display='block';
+        id('curtain').style.height='0';
     }
 }
 // NEW CATEGORY/NOTE
