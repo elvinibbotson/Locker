@@ -31,18 +31,16 @@ id('main').addEventListener('touchend', function(event) {
         category=null;
         listCategories();
     }
-    else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
+    // else if((drag.x>50)&&(currentDialog)) showDialog(currentDialog,false); // drag left to close dialogs
 })
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
 	if(category===null) showDialog('dataDialog',true);
 });
-/* DISPLAY MESSAGE
-function display(message) {
-	id('message').innerText=message;
-	showDialog('messageDialog',true);
-}
-*/
+// CLOSE DIALOG
+id('curtain').addEventListener('click',function() {
+	showDialog(currentDialog,false);
+})
 // SHOW/HIDE DIALOG
 function showDialog(dialog,show) {
     console.log('show '+dialog+': '+show);
