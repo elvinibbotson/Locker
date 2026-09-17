@@ -220,7 +220,7 @@ function load() {
 		id('dataMessage').innerText=days+' days since last backup';
 		id('backupButton').disabled=false;
 		id('restoreButton').disabled=true;
-		showDialog('dateDialog',true);
+		showDialog('dataDialog',true);
 	}
 }
 function save() {
