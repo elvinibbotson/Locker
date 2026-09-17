@@ -212,7 +212,7 @@ function load() {
 	}
 	console.log(items.length+' items loaded; '+categories.length+' categories');
 	category=null;
-	// listCategories();
+	listCategories();
 	var today=Math.floor(new Date().getTime()/86400000);
 	var days=today-backupDay;
 	if(days>4) { // backup reminder every 5 days
