@@ -35,7 +35,12 @@ id('main').addEventListener('touchend', function(event) {
 })
 // TAP ON HEADER
 id('heading').addEventListener('click',function() {
-	if(category===null) showDialog('dataDialog',true);
+	if(category===null) {
+		id('dataMessage').innerText='save/restore backup';
+		id('backupButton').disabled=false;
+		id('restoreButton').disabled=false;
+		showDialog('dataDialog',true);
+	}
 });
 // CLOSE DIALOG
 id('curtain').addEventListener('click',function() {
@@ -193,6 +198,7 @@ function load() {
 	if(!data) {
 		id('dataMessage').innerText='No data - restore backup?';
 		id('backupButton').disabled=true;
+		id('restoreButton').disabled=false;
 		showDialog('dataDialog',true);
 		return;
 	}
@@ -210,9 +216,11 @@ function load() {
 	var today=Math.floor(new Date().getTime()/86400000);
 	var days=today-backupDay;
 	if(days>4) { // backup reminder every 5 days
-		id('dataMessage').innerText=days+' since last backup';
+		if(days>28) days='too many';
+		id('dataMessage').innerText=days+' days since last backup';
+		id('backupButton').disabled=false;
 		id('restoreButton').disabled=true;
-		toggleDialog('dateDialog',true);
+		showDialog('dateDialog',true);
 	}
 }
 function save() {
@@ -221,7 +229,9 @@ function save() {
 	console.log('data saved to LockerData');
 }
 id('backupButton').addEventListener('click',backup);
-id('restoreButton').addEventListener('click',function() {
+id('restoreButton').addEventListener('click',restore);
+/* okd restore code...
+function() {
 	var event = new MouseEvent('click',{
 		bubbles: true,
 		cancelable: true,
@@ -249,6 +259,7 @@ id('restoreButton').addEventListener('click',function() {
 	id('backupButton').disabled=false;
 	showDialog('dataDialog',false);
 });
+*/
 function backup() {
   	console.log("EXPORT");
 	var fileName="LockerData.json";
@@ -264,9 +275,33 @@ function backup() {
    	a.download=fileName;
     document.body.appendChild(a);
     a.click();
-	id('dataMessage').innerText='';
-	id('restoreButton').disabled=false;
-	toggleDialog('dataDialog',false);
+	showDialog('dataDialog',false);
+}
+function restore() {
+	var event = new MouseEvent('click',{
+		bubbles: true,
+		cancelable: true,
+		view: window
+	});
+	fileChooser.dispatchEvent(event);
+	fileChooser.onchange=(event)=>{
+		var file=id('fileChooser').files[0];
+    	console.log("file name: "+file.name);
+    	var fileReader=new FileReader();
+    	fileReader.addEventListener('load', function(evt) {
+			console.log("file read: "+evt.target.result);
+    		var data=evt.target.result;
+    		var json=JSON.parse(data);
+    		items=json.items;
+			console.log(items.length+" items loaded");
+    		save();
+    		console.log('data imported and saved');
+    		load();
+    	});
+    	fileReader.readAsText(file);
+    	listCategories();
+	}
+	showDialog('dataDialog',false);
 }
 // ENCRYPT/DECRYPT TEXT USING KEY
 function cryptify(value,key) {
@@ -347,17 +382,6 @@ backupDay=window.localStorage.getItem('backupDay');
 if(backupDay) console.log('last backup on day '+backupDay);
 else backupDay=0;
 load();
-// readData();
-/*
-var data=window.localStorage.getItem('items');
-var items=JSON.parse(data);
-categories=[];
-for(var i in items) {
-	if(categories.indexOf(items[i].category)<0) categories.push(items[i].category);
-}
-console.log(items.length+' items loaded; '+categories.length+' categories');
-category=null;
-*/
 // implement service worker if browser is PWA friendly
 if (navigator.serviceWorker.controller) {
 	console.log('Active service worker found, no need to register')
