@@ -116,7 +116,7 @@ id('deleteNoteButton').addEventListener('click', function() {
 	itemIndex=listItems[itemIndex].index;
 	console.log('ie. item '+itemIndex);
     items.splice(itemIndex,1);
-    save(); // WAS saveData();
+    save();
     console.log("delete complete");
     showDialog('noteDialog',false);
     listCategoryItems();
@@ -249,7 +249,7 @@ async function sync() {
 		items=body.items;
 		save();
 		message(items.length+' items downloaded',false);
-		disconnect(); // NEW
+		disconnect();
 	}
 	else { // local data is newer - upload to pod
 		message('no download - UPLOAD',false);
@@ -267,7 +267,7 @@ async function upload() {
 	var fileName="drive/SolidLockerData.json";
 	console.log(items.length+" items to upload");
 	if(items.length<1) { // NEW
-		alert('NO DATA');
+		message('NO DATA');
 		disconnect();
 		return;
 	}
@@ -286,7 +286,7 @@ async function upload() {
     	message(items.length+' items uploaded');
     	syncDay=new Date()/86400000;
 		window.localStorage.setItem('syncDay',syncDay);
-		disconnect(); // NEW
+		disconnect();
 	}
 	catch (error) {console.error(error.message);alert(error.message);}
 }
@@ -326,7 +326,7 @@ if(!syncDay) {
 	syncDay=new Date(0)/86400000; // default to 1970
 	window.localStorage.setItem('syncDay',syncDay);
 }
-keyCode=window.localStorage.keyCode; // load any saved key
+keyCode=window.localStorage.getItem('keyCode')'; // load any saved key
 console.log("saved key: "+keyCode);
 keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
 console.log('decryted key: '+keyCode);
