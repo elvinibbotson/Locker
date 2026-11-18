@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolidLocker</title>
+    <title>Locker</title>
     <link rel="stylesheet" type="text/css" href="Locker.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="application-name" content="SolidLocker">
+    <meta name="application-name" content="Locker">
 </head>
 <body>
 <div id='keyDialog' class='dialog'>
@@ -25,7 +25,7 @@
 </div>
 <script>
 	id('keyDialog').style.display='block';
-	keyCode=window.localStorage.keyCode; // load any saved key
+	keyCode=window.localStorage.getItem('keyCode'); // load any saved key
 	console.log("saved key: "+keyCode);
 	if(!keyCode) { // first use - set a PIN
 		console.log('set new PIN');
@@ -107,9 +107,9 @@
 		console.log('Active service worker found, no need to register')
 	}
 	else
-	{ //Register the ServiceWorker
+	{ // Register the ServiceWorker
 		navigator.serviceWorker.register('sw.js', {
-			scope: '/SolidLocker/'
+			scope: '/Locker/'
 		}).then(function(reg) {
 			console.log('Service worker has been registered for scope:'+ reg.scope);
 		});

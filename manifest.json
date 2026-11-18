@@ -1,6 +1,6 @@
 {
-  "name": "SolidLocker PWA",
-  "short_name": "SolidLocker",
+  "name": "Locker PWA",
+  "short_name": "Locker",
   "icons": [
 	{
 		"src": "Locker.png",

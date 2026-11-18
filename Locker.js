@@ -147,7 +147,7 @@ function listCategories() {
 		listItem.style.fontWeight='bold'; // lists are bold
 		id('list').appendChild(listItem);
 	}
-	id('heading').innerText='SolidLocker';
+	id('heading').innerText='Locker';
 }
 // LIST ITEMS IN CATEGORY
 function listCategoryItems() {
@@ -221,7 +221,7 @@ function connect() {
 		auth.login({
     		oidcIssuer:"https://privatedatapod.com",
     		redirectUrl:window.location.href,
-    		clientName:"SolidLocker"
+    		clientName:"Locker"
     	});
 	}
 	catch(error) {console.error(error.message);}
@@ -237,7 +237,7 @@ async function sync() {
 	latest=window.localStorage.getItem('latest');
 	console.log('latest is '+latest);
 	message('SYNC - DOWNLOAD?',true);
-	var response=await session.fetch('https://elvinibbotson.privatedatapod.com/drive/SolidLockerData.json',
+	var response=await session.fetch('https://elvinibbotson.privatedatapod.com/drive/LockerData.json',
 	{ // ONLY RESTORE DATA FROM POD IF NEWER THAN CURRENT LOCAL DATA
 		method: 'GET',
 		headers: {'If-Modified-Since':latest}
@@ -264,7 +264,7 @@ async function sync() {
 async function upload() {
 	if(!session.info.isLoggedIn) {connect(); return;} // ensure connected
   	console.log("UPLOAD");
-	var fileName="drive/SolidLockerData.json";
+	var fileName="drive/LockerData.json";
 	console.log(items.length+" items to upload");
 	if(items.length<1) { // NEW
 		message('NO DATA');
@@ -326,10 +326,10 @@ if(!syncDay) {
 	syncDay=new Date(0)/86400000; // default to 1970
 	window.localStorage.setItem('syncDay',syncDay);
 }
-keyCode=window.localStorage.getItem('keyCode')'; // load any saved key
+keyCode=window.localStorage.getItem('keyCode'); // load any saved key
 console.log("saved key: "+keyCode);
 keyCode=cryptify(keyCode,'secrets'); // saved key was encrypted
-console.log('decryted key: '+keyCode);
+console.log('decrypted key: '+keyCode);
 load();
 if(new Date()/86400000-syncDay>5) message('More than 5 days since last sync.');
 // IMPLEMENT SERVICE WORKER if browser is PWA friendly
@@ -339,7 +339,7 @@ if (navigator.serviceWorker.controller) {
 else
 { //Register the ServiceWorker
 	navigator.serviceWorker.register('sw.js', {
-		scope: '/SolidLocker/'
+		scope: '/Locker/'
 	}).then(function(reg) {
 		console.log('Service worker has been registered for scope:'+ reg.scope);
 	});
